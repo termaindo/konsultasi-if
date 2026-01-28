@@ -15,8 +15,9 @@ with st.sidebar:
     # Opsi: User pakai API Key sendiri atau gratis (jika Developer menyediakan)
     # Untuk keamanan publik, kita minta user masukkan key mereka dulu
     # Mengambil kunci dari Secrets (Brankas)
+# Masukkan NAMA LABEL yang Bapak tulis di menu Secrets tadi
 if "GOOGLE_API_KEY" in st.secrets:
-    api_key = st.secrets["AIzaSyB6lfu2kjP7rIU7bANyOrk13MWhkBXqBa4"]
+    api_key = st.secrets["GOOGLE_API_KEY"]
 else:
     api_key = st.text_input("🔑 Masukkan Google API Key", type="password")
     
@@ -74,3 +75,4 @@ if tombol:
         except Exception as e:
 
             st.error(f"Terjadi kesalahan: {e}")
+
