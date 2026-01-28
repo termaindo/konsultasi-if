@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+import time
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
@@ -12,7 +13,7 @@ st.set_page_config(
 with st.sidebar:
     st.header("⚙️ Data Pengguna")
     
-    # Cek API Key
+    # Ambil API Key dari Secrets (Brankas)
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["GOOGLE_API_KEY"]
     else:
@@ -50,17 +51,14 @@ tombol = st.button("Analisa Profil & Jawab", type="primary")
 # --- 4. Logika AI ---
 if tombol:
     if not api_key:
-        st.warning("⚠️ Belum ada API Key.")
+        st.warning("⚠️ Belum ada API Key. Mohon cek setting Secrets.")
     else:
         try:
             genai.configure(api_key=api_key)
             
-            # --- BAGIAN KRUSIAL: KITA PAKAI MODEL YANG ADA DI DAFTAR BAPAK ---
-            # Menggunakan Gemini 2.0 Flash (Cepat & Gratis)
-            nama_model = 'models/gemini-2.0-flash'
-            
-            st.caption(f"🤖 Menggunakan Otak AI: `{nama_model}`") # Info buat kita
-            model = genai.GenerativeModel(nama_model)
+            # --- MODEL FINAL: GEMINI 1.5 FLASH ---
+            # Model ini kuota gratisnya 15 RPM (Request Per Minute). Sangat cukup.
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
             prompt_sistem = f"""
             Anda adalah Ahli Krononutrisi & Metabolisme (Intermittent Fasting Expert).
@@ -71,11 +69,10 @@ if tombol:
             
             PERTANYAAN: "{pertanyaan}"
             
-            SOP KEAMANAN:
-            1. Usia > 50: Wajib ingatkan protein (cegah otot susut).
-            2. BMI < 18.5: Larang puasa ekstrem.
-            3. Penyakit Jantung/Maag: Beri disclaimer medis & saran puasa bertahap.
-            4. Fokus manfaat Autofagi.
+            SOP:
+            1. Sesuaikan saran dengan Usia Lanjut (>50) & BMI.
+            2. Wajib Disclaimer Medis.
+            3. Fokus Autofagi & Sirkadian.
             """
             
             with st.spinner('Sedang menganalisis...'):
@@ -84,12 +81,11 @@ if tombol:
                 st.markdown(response.text)
                 
         except Exception as e:
-            # Jika Gemini 2.0 Flash penuh, kita coba adiknya (Flash Lite)
-            try:
-                st.warning("Mencoba jalur cadangan...")
-                model_cadangan = genai.GenerativeModel('models/gemini-2.0-flash-lite')
-                response = model_cadangan.generate_content(prompt_sistem)
-                st.markdown("### 💡 Hasil Analisa")
-                st.markdown(response.text)
-            except:
-                st.error(f"Terjadi kesalahan: {e}")
+            # Jika masih error, kita tampilkan pesan yang jelas
+            err_msg = str(e)
+            if "429" in err_msg:
+                st.error("⏳ Terlalu banyak permintaan. Mohon tunggu 1 menit.")
+            elif "404" in err_msg:
+                st.error("⚠️ Masalah Versi. Mohon lakukan REBOOT App di menu Manage App.")
+            else:
+                st.error(f"Terjadi kesalahan: {err_msg}")
