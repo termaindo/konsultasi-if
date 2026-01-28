@@ -1,5 +1,6 @@
 import streamlit as st
 import google.generativeai as genai
+import time
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
@@ -47,7 +48,7 @@ st.markdown("Dapatkan panduan puasa yang **aman** dan disesuaikan dengan kondisi
 pertanyaan = st.text_area("Apa yang ingin Anda tanyakan?", height=100, placeholder="Misal: Saya punya maag, jam berapa sebaiknya mulai puasa?")
 tombol = st.button("Analisa Profil & Jawab", type="primary")
 
-# --- 4. Logika AI ---
+# --- 4. Logika AI (Versi Stabil & Gratis) ---
 if tombol:
     if not api_key:
         st.warning("⚠️ Belum ada API Key.")
@@ -55,46 +56,46 @@ if tombol:
         try:
             genai.configure(api_key=api_key)
             
-            # --- LOGIKA PENCARI MODEL OTOMATIS (AUTO-DETECT) ---
-            # Kode ini akan mencari model apa yang tersedia, jadi tidak mungkin 404
-            model_pilihan = None
-            daftar_model = []
+            # KITA KUNCI KE MODEL YANG PASTI GRATIS & STABIL
+            # Menggunakan Gemini 1.5 Flash
+            model = genai.GenerativeModel('gemini-1.5-flash')
             
-            for m in genai.list_models():
-                if 'generateContent' in m.supported_generation_methods:
-                    nama = m.name
-                    daftar_model.append(nama)
-                    # Prioritaskan Flash, lalu Pro
-                    if 'flash' in nama and '1.5' in nama:
-                        model_pilihan = nama
-                        break # Ketemu yang terbaik, stop cari
-                    elif 'gemini-pro' in nama and model_pilihan is None:
-                        model_pilihan = nama
+            prompt_sistem = f"""
+            Anda adalah Ahli Krononutrisi & Metabolisme (Intermittent Fasting Expert).
             
-            # Jika sistem gagal pilih otomatis, ambil yang pertama ketemu
-            if model_pilihan is None and daftar_model:
-                model_pilihan = daftar_model[0]
+            DATA USER:
+            - Usia: {usia} Tahun
+            - Gender: {gender}
+            - BMI: {bmi:.2f}
+            - Kondisi Medis: {kondisi}
             
-            if model_pilihan:
-                # Gunakan model yang ditemukan
-                model = genai.GenerativeModel(model_pilihan)
-                
-                prompt_sistem = f"""
-                Anda adalah Ahli Krononutrisi & Metabolisme.
-                DATA USER: Usia: {usia} | Gender: {gender} | BMI: {bmi:.2f} | Kondisi: {kondisi}
-                TUGAS: Jawab pertanyaan user: "{pertanyaan}"
-                SOP: 
-                1. Lansia (>50th) & Underweight hati-hati.
-                2. Disclaimer medis wajib.
-                3. Fokus sirkadian & autofagi.
-                """
-                
-                with st.spinner(f'Sedang menganalisis (Menggunakan model: {model_pilihan})...'):
-                    response = model.generate_content(prompt_sistem)
-                    st.markdown("### 💡 Hasil Analisa")
-                    st.markdown(response.text)
-            else:
-                st.error("Tidak ditemukan model Gemini yang aktif untuk API Key ini.")
+            PERTANYAAN USER: "{pertanyaan}"
+            
+            TUGAS:
+            Jawablah dengan gaya bahasa dokter yang ramah namun tegas.
+            
+            SOP KEAMANAN (WAJIB):
+            1. Jika Usia > 50: Ingatkan risiko kehilangan otot (sarkopenia) & pentingnya protein.
+            2. Jika BMI < 18.5: Larang puasa panjang (>14 jam).
+            3. Jika ada Riwayat Jantung/Stent/Diabetes:
+               - Wajib sertakan DISCLAIMER bahwa ini edukasi, bukan resep dokter.
+               - Sarankan konsultasi dokter jantung/internis.
+               - Fokuskan manfaat autofagi untuk pemulihan sel, tapi ingatkan bahaya dehidrasi.
+            4. Berikan saran Jam Makan yang sesuai irama sirkadian (Matahari).
+            """
+            
+            with st.spinner('Sedang menganalisis metabolisme Anda...'):
+                response = model.generate_content(prompt_sistem)
+                st.markdown("### 💡 Hasil Analisa")
+                st.markdown(response.text)
+                st.info("ℹ️ Tips: Minum air putih yang cukup saat jendela puasa.")
                 
         except Exception as e:
-            st.error(f"Terjadi kesalahan: {e}")
+            # Penanganan Error yang Lebih Manusiawi
+            error_msg = str(e)
+            if "429" in error_msg:
+                st.error("⏳ Server sedang sibuk (Kuota Gratis Penuh). Mohon tunggu 1 menit lalu coba lagi.")
+            elif "404" in error_msg:
+                st.error("⚠️ Model sedang maintenance. Silakan coba refresh halaman.")
+            else:
+                st.error(f"Terjadi kesalahan: {error_msg}")
