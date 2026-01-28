@@ -12,17 +12,16 @@ st.set_page_config(
 with st.sidebar:
     st.header("⚙️ Data Pengguna")
     
-    # Opsi: User pakai API Key sendiri atau gratis (jika Developer menyediakan)
-    # Untuk keamanan publik, kita minta user masukkan key mereka dulu
-    # Mengambil kunci dari Secrets (Brankas)
-# Masukkan NAMA LABEL yang Bapak tulis di menu Secrets tadi
-if "GOOGLE_API_KEY" in st.secrets:
-    api_key = st.secrets["GOOGLE_API_KEY"]
-else:
-    api_key = st.text_input("🔑 Masukkan Google API Key", type="password")
+    # --- LOGIKA API KEY OTOMATIS (MENDETEKSI SECRETS) ---
+    # Jika di Secrets ada kunci, pakai itu. Jika tidak, minta user masukkan.
+    if "GOOGLE_API_KEY" in st.secrets:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+    else:
+        api_key = st.text_input("🔑 Masukkan Google API Key", type="password", help="Masukkan API Key jika belum disetting di Secrets")
     
     st.divider()
     
+    # --- FORMULIR YANG TADI HILANG ---
     st.subheader("Profil Biologis")
     usia = st.number_input("Usia (Tahun)", 15, 100, 61)
     gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
@@ -32,7 +31,16 @@ else:
 
     # Hitung BMI
     bmi = berat / ((tinggi/100)**2)
-    st.info(f"BMI Anda: {bmi:.2f}")
+    
+    # Indikator Visual BMI
+    if bmi < 18.5:
+        st.warning(f"⚠️ BMI: {bmi:.2f} (Underweight)")
+    elif 18.5 <= bmi < 25:
+        st.success(f"✅ BMI: {bmi:.2f} (Normal)")
+    elif 25 <= bmi < 30:
+        st.warning(f"⚠️ BMI: {bmi:.2f} (Overweight)")
+    else:
+        st.error(f"🚨 BMI: {bmi:.2f} (Obesity)")
 
 # --- 3. Area Utama ---
 st.title("🌱 Konsultan Intermittent Fasting & Autofagi")
@@ -44,7 +52,7 @@ tombol = st.button("Analisa Profil & Jawab", type="primary")
 # --- 4. Logika AI ---
 if tombol:
     if not api_key:
-        st.warning("⚠️ Mohon masukkan Google API Key di menu sebelah kiri.")
+        st.warning("⚠️ Aplikasi belum memiliki API Key. Mohon setting di Streamlit Secrets atau masukkan manual.")
     else:
         try:
             genai.configure(api_key=api_key)
@@ -71,8 +79,7 @@ if tombol:
                 response = model.generate_content(prompt_sistem)
                 st.markdown("### 💡 Hasil Analisa")
                 st.markdown(response.text)
+                st.success("Analisa selesai. Konsultasikan ke dokter untuk keputusan final.")
                 
         except Exception as e:
-
             st.error(f"Terjadi kesalahan: {e}")
-
