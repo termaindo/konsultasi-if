@@ -14,7 +14,11 @@ with st.sidebar:
     
     # Opsi: User pakai API Key sendiri atau gratis (jika Developer menyediakan)
     # Untuk keamanan publik, kita minta user masukkan key mereka dulu
-    api_key = st.text_input("🔑 Masukkan Google API Key", type="password", help="Dapatkan gratis di aistudio.google.com")
+    # Mengambil kunci dari Secrets (Brankas)
+if "GOOGLE_API_KEY" in st.secrets:
+    api_key = st.secrets["AIzaSyB6lfu2kjP7rIU7bANyOrk13MWhkBXqBa4"]
+else:
+    api_key = st.text_input("🔑 Masukkan Google API Key", type="password")
     
     st.divider()
     
@@ -68,4 +72,5 @@ if tombol:
                 st.markdown(response.text)
                 
         except Exception as e:
+
             st.error(f"Terjadi kesalahan: {e}")
