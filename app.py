@@ -1,6 +1,5 @@
 import streamlit as st
 import google.generativeai as genai
-import time
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
@@ -13,7 +12,7 @@ st.set_page_config(
 with st.sidebar:
     st.header("⚙️ Data Pengguna")
     
-    # Ambil API Key dari Secrets (Brankas)
+    # Ambil API Key dari Secrets
     if "GOOGLE_API_KEY" in st.secrets:
         api_key = st.secrets["GOOGLE_API_KEY"]
     else:
@@ -51,41 +50,29 @@ tombol = st.button("Analisa Profil & Jawab", type="primary")
 # --- 4. Logika AI ---
 if tombol:
     if not api_key:
-        st.warning("⚠️ Belum ada API Key. Mohon cek setting Secrets.")
+        st.warning("⚠️ Belum ada API Key. Cek Secrets.")
     else:
         try:
             genai.configure(api_key=api_key)
             
-            # --- MODEL FINAL: GEMINI 1.5 FLASH ---
-            # Model ini kuota gratisnya 15 RPM (Request Per Minute). Sangat cukup.
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            # --- PERBAIKAN: MENGGUNAKAN NAMA ALIAS DARI DAFTAR BAPAK ---
+            # Kita pakai 'models/gemini-flash-latest' karena ini yang muncul di list Bapak (No. 16)
+            nama_model = 'models/gemini-flash-latest'
+            
+            model = genai.GenerativeModel(nama_model)
             
             prompt_sistem = f"""
-            Anda adalah Ahli Krononutrisi & Metabolisme (Intermittent Fasting Expert).
-            
-            DATA USER:
-            - Usia: {usia} Tahun | Gender: {gender}
-            - BMI: {bmi:.2f} | Kondisi: {kondisi}
-            
+            Anda adalah Ahli Krononutrisi & Metabolisme.
+            DATA USER: Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
             PERTANYAAN: "{pertanyaan}"
-            
-            SOP:
-            1. Sesuaikan saran dengan Usia Lanjut (>50) & BMI.
-            2. Wajib Disclaimer Medis.
-            3. Fokus Autofagi & Sirkadian.
+            Jawab dengan aman, ilmiah, dan sesuaikan dengan kondisi user.
             """
             
             with st.spinner('Sedang menganalisis...'):
                 response = model.generate_content(prompt_sistem)
                 st.markdown("### 💡 Hasil Analisa")
                 st.markdown(response.text)
+                st.caption(f"Menggunakan model: {nama_model}")
                 
         except Exception as e:
-            # Jika masih error, kita tampilkan pesan yang jelas
-            err_msg = str(e)
-            if "429" in err_msg:
-                st.error("⏳ Terlalu banyak permintaan. Mohon tunggu 1 menit.")
-            elif "404" in err_msg:
-                st.error("⚠️ Masalah Versi. Mohon lakukan REBOOT App di menu Manage App.")
-            else:
-                st.error(f"Terjadi kesalahan: {err_msg}")
+            st.error(f"Terjadi kesalahan: {e}")
