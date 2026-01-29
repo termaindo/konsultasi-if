@@ -5,7 +5,7 @@ import base64
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
-    page_title="Aplikasi Sehat",
+    page_title="Konsultan Hidup Sehat",
     page_icon="🌱",
     layout="centered"
 )
@@ -18,7 +18,7 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     
     # Header
     pdf.set_font("Arial", 'B', 16)
-    pdf.cell(200, 10, txt="Hasil Analisa Konsultan IF", ln=1, align='C')
+    pdf.cell(200, 10, txt="Hasil Analisa Konsultan Hidup Sehat", ln=1, align='C')
     
     # Info User
     pdf.set_font("Arial", size=10)
@@ -39,9 +39,9 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     
     return pdf.output(dest="S").encode("latin-1")
 
-# --- 2. Judul & Header ---
+# --- 2. Judul & Header (UPDATE) ---
 st.title("🌱 Konsultan Hidup Sehat")
-st.markdown("Dapatkan pola Puasa Pintar (Intermitten Fasting, saran nutrisi, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
+st.markdown("Dapatkan pola Puasa Pintar (Intermittent Fasting), saran nutrisi, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
 st.divider()
 
 # --- 3. Cek API Key ---
@@ -92,7 +92,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT PROTEKSI BRAND (MARKETING SAFE) ---
+        # --- PROMPT UPDATE (ISTILAH TEKNIS) ---
         prompt_sistem = f"""
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
         DATA USER: Nama {nama}, Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
@@ -102,16 +102,20 @@ if tombol:
         1. Jawab pertanyaan user dengan ramah dan ilmiah.
         2. Sesuaikan jadwal puasa dengan kondisi user.
         
+        ATURAN PENULISAN (PENTING):
+        - Jika menggunakan istilah teknis atau singkatan medis (seperti IF, TRE, CKD, GGK, GERD, dll), WAJIB tuliskan kepanjangannya saat pertama kali disebut.
+          Contoh: "Intermittent Fasting (IF)", "Gagal Ginjal Kronis (GGK)", "Time Restricted Eating (TRE)".
+          Jangan biarkan user bingung dengan singkatan.
+        
         LOGIKA PROMOSI PRODUK (BRAND PROTECTION PROTOCOL):
         Lakukan screening ketat terhadap kondisi user:
         
-        1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (CKD/Cuci Darah), Asam Urat Akut berat, Fenilketonuria, atau Autoimun sensitif?
+        1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (GGK/CKD/Cuci Darah), Asam Urat Akut berat, atau Autoimun sensitif?
         
            - JIKA ADA KONTRAINDIKASI (BAHAYA): 
              DILARANG KERAS MENYEBUT KATA "SPIRULINA".
              JANGAN jadikan Spirulina sebagai contoh produk yang dilarang.
-             Gunakan istilah umum yang samar, contoh kalimat: "Kami tidak merekomendasikan suplemen pekat atau tinggi protein tambahan untuk saat ini."
-             Tujuannya agar user tidak antipati terhadap merk tersebut (karena mungkin aman untuk keluarganya).
+             Gunakan istilah umum yang samar, contoh: "Kami tidak merekomendasikan suplemen pekat atau tinggi protein tambahan untuk saat ini."
              
            - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
              WAJIB sertakan paragraf menarik tentang manfaat **SPIRULINA** sebagai Superfood. 
@@ -145,9 +149,9 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Penjelasan ringkas, ilmiah, dan mudah dipraktikkan.
                 """)
             with col_btn:
-                # GANTI LINK WA DISINI
-                link_beli = "https://wa.me/6281802026090?text=Halo%20Kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%20dan%20tanya%20tentang%20Spirulina"
-                st.link_button("📖 Beli Ebook / Tanya Spirulina", link_beli, use_container_width=True)
+                # PASTIKAN GANTI NO WA DISINI
+                link_beli = "https://wa.me/6281234567890?text=Halo%20Pak%20Musa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar"
+                st.link_button("📖 Beli Ebook", link_beli, use_container_width=True)
 
             st.divider()
 
@@ -165,4 +169,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
