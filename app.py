@@ -73,7 +73,6 @@ with st.form("form_konsultasi"):
     st.subheader("3️⃣ Pertanyaan Anda")
     pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
 
-    # REVISI: Mengganti kata Resep menjadi Panduan
     tombol = st.form_submit_button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
 
 # --- 5. Logika AI & Hasil ---
@@ -93,6 +92,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
+        # --- PROMPT REVISI (BAHASA HALUS) ---
         prompt_sistem = f"""
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
         DATA USER: Nama {nama}, Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
@@ -102,18 +102,19 @@ if tombol:
         1. Jawab pertanyaan user dengan ramah dan ilmiah.
         2. Sesuaikan jadwal puasa dengan kondisi user.
         
-        LOGIKA PROMOSI PRODUK (SANGAT PENTING):
+        LOGIKA PROMOSI PRODUK (DENGAN BAHASA HALUS):
         Lakukan screening ketat terhadap kondisi user:
         
         1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (CKD/Cuci Darah), Asam Urat Akut berat, Fenilketonuria, atau Autoimun sensitif?
         
            - JIKA ADA KONTRAINDIKASI (BAHAYA): 
-             DILARANG KERAS MENULIS KATA "SPIRULINA". 
-             JANGAN menawarkan, JANGAN membahas, dan JANGAN memberi peringatan tentang Spirulina. 
-             Anggap produk ini tidak ada. Fokuskan saran nutrisi hanya pada "Real Food" yang rendah beban ginjalnya.
+             Secara default: JANGAN bahas Spirulina (Silent Mode).
+             TAPI, jika user bertanya spesifik tentang Spirulina, JAWABLAH DENGAN HALUS:
+             Gunakan kalimat: "Untuk kondisi kesehatan Anda saat ini, kami TIDAK MEREKOMENDASIKAN penambahan suplemen ini tanpa pengawasan dokter."
+             JANGAN gunakan kata kasar seperti "Dilarang", "Bahaya", atau "Jangan makan". Gunakan bahasa yang mengayomi.
              
            - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
-             WAJIB sertakan paragraf menarik tentang manfaat SPIRULINA sebagai Superfood yang cocok untuk keluhan mereka. 
+             WAJIB sertakan paragraf menarik tentang manfaat SPIRULINA sebagai Superfood. 
              Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
         
         2. PROMOSI EBOOK (Untuk Semua User):
@@ -128,7 +129,7 @@ if tombol:
         with st.spinner('Sedang menyusun panduan kesehatan Anda...'):
             response = model.generate_content(prompt_sistem)
             
-            # REVISI: Judul Hasil
+            # Tampilkan Hasil AI
             st.markdown("### 💡 Panduan & Analisa Personal")
             st.markdown(response.text)
             
@@ -144,21 +145,19 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Penjelasan ringkas, ilmiah, dan mudah dipraktikkan.
                 """)
             with col_btn:
-                # GANTI LINK DI BAWAH INI DENGAN LINK WA BAPAK
+                # PASTIKAN GANTI NO WA DISINI
                 link_beli = "https://wa.me/6281234567890?text=Halo%20Pak%20Musa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar"
                 st.link_button("📖 Beli Ebook", link_beli, use_container_width=True)
 
             st.divider()
 
             # --- BAGIAN DOWNLOAD PDF ---
-            # REVISI: Kata-kata simpan
             st.write("📥 **Simpan Panduan Ini:**")
             file_pdf = create_pdf(response.text, nama, usia)
             
             st.download_button(
                 label="📄 Download PDF (Klik Disini)",
                 data=file_pdf,
-                # REVISI: Nama file PDF
                 file_name=f"Panduan_Sehat_{nama}.pdf",
                 mime="application/pdf",
                 use_container_width=True
@@ -166,6 +165,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
-
-
