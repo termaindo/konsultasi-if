@@ -5,7 +5,7 @@ import base64
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
-    page_title="Konsultan IF & Autofagi",
+    page_title="Aplikasi Sehat",
     page_icon="🌱",
     layout="centered"
 )
@@ -40,8 +40,8 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     return pdf.output(dest="S").encode("latin-1")
 
 # --- 2. Judul & Header ---
-st.title("🌱 Konsultan Intermittent Fasting")
-st.markdown("Dapatkan jadwal puasa, saran nutrisi **Spirulina**, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
+st.title("🌱 Konsultan Hidup Sehat")
+st.markdown("Dapatkan pola Puasa Pintar (Intermitten Fasting, saran nutrisi, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
 st.divider()
 
 # --- 3. Cek API Key ---
@@ -165,3 +165,4 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
