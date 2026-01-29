@@ -102,13 +102,22 @@ if tombol:
         1. Jawab pertanyaan user dengan ramah dan ilmiah.
         2. Sesuaikan jadwal puasa dengan kondisi user.
         
-        TUGAS WAJIB (PRODUK & KEAMANAN):
-        1. ANALISA DULU: Cek apakah user memiliki riwayat Gagal Ginjal (GGK/CKD), Asam Urat Akut, atau Autoimun tertentu yang sensitif.
-           - JIKA AMAN: WAJIB sertakan paragraf khusus tentang manfaat **SPIRULINA** (Superfood) yang relevan dengan keluhan mereka (misal: untuk energi, diabetes, atau kolesterol). Sarankan sebagai suplemen alami.
-           - JIKA TIDAK AMAN (ada GGK/Ginjal Berat): JANGAN lakukan dan tampilkan pembahasan tentang Spirulina. Fokuskan saran pada diet rendah protein/kalium yang ketat dan konsultasi dokter.
+        LOGIKA PROMOSI PRODUK (SANGAT PENTING):
+        Lakukan screening ketat terhadap kondisi user:
         
-        2. DI AKHIR SARAN (Untuk Semua User):
-           Rekomendasikan membaca Ebook **"Puasa Pintar"** untuk memahami dasar ilmiah Autofagi agar puasa lebih efektif.
+        1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (CKD/Cuci Darah), Asam Urat Akut berat, Fenilketonuria, atau Autoimun sensitif?
+        
+           - JIKA ADA KONTRAINDIKASI (BAHAYA): 
+             DILARANG KERAS MENULIS KATA "SPIRULINA". 
+             JANGAN menawarkan, JANGAN membahas, dan JANGAN memberi peringatan tentang Spirulina. 
+             Anggap produk ini tidak ada. Fokuskan saran nutrisi hanya pada "Real Food" yang rendah beban ginjalnya.
+             
+           - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
+             WAJIB sertakan paragraf menarik tentang manfaat SPIRULINA sebagai Superfood yang cocok untuk keluhan mereka. 
+             Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
+        
+        2. PROMOSI EBOOK (Untuk Semua User):
+           Di akhir saran, tetap rekomendasikan Ebook **"Puasa Pintar"** sebagai panduan ilmu autofagi yang lengkap.
         
         FORMAT: 
         - Gunakan poin-poin (*) agar rapi. 
@@ -157,5 +166,6 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
