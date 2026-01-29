@@ -73,7 +73,8 @@ with st.form("form_konsultasi"):
     st.subheader("3️⃣ Pertanyaan Anda")
     pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
 
-    tombol = st.form_submit_button("🩺 Analisa & Berikan Resep", type="primary", use_container_width=True)
+    # REVISI: Mengganti kata Resep menjadi Panduan
+    tombol = st.form_submit_button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
 
 # --- 5. Logika AI & Hasil ---
 if tombol:
@@ -92,7 +93,6 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT SPESIAL DENGAN SPIRULINA & EBOOK ---
         prompt_sistem = f"""
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
         DATA USER: Nama {nama}, Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
@@ -105,22 +105,22 @@ if tombol:
         TUGAS WAJIB (PRODUK):
         1. WAJIB sertakan paragraf khusus tentang manfaat **SPIRULINA** bagi kondisi user ini. 
            (Contoh: Jika Diabetes -> bahas kontrol gula darah. Jika Maag -> bahas sifat alkali spirulina/penyembuh luka lambung).
-           Sarankan dosis aman.
+           Sarankan dosis aman sebagai suplemen pendamping.
         2. DI AKHIR SARAN, rekomendasikan user untuk membaca Ebook **"Puasa Pintar: Panduan Ringkas Autofagi untuk Pemula"** agar mereka paham teori lengkapnya.
         
-        FORMAT: Gunakan poin-poin (*) agar rapi. Hindari emoji berlebihan.
+        FORMAT: Gunakan poin-poin (*) agar rapi. Hindari emoji berlebihan. Gunakan istilah 'Panduan' atau 'Saran', JANGAN gunakan kata 'Resep'.
         """
         
-        with st.spinner('Sedang meracik strategi kesehatan Anda...'):
+        with st.spinner('Sedang menyusun panduan kesehatan Anda...'):
             response = model.generate_content(prompt_sistem)
             
-            # Tampilkan Hasil AI
-            st.markdown("### 💡 Resep & Analisa Personal")
+            # REVISI: Judul Hasil
+            st.markdown("### 💡 Panduan & Analisa Personal")
             st.markdown(response.text)
             
             st.divider()
             
-            # --- BAGIAN PROMOSI EBOOK (Highlight Hijau) ---
+            # --- BAGIAN PROMOSI EBOOK ---
             st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
             col_promo, col_btn = st.columns([2, 1])
             
@@ -130,20 +130,22 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Penjelasan ringkas, ilmiah, dan mudah dipraktikkan.
                 """)
             with col_btn:
-                # GANTI LINK DI BAWAH INI DENGAN LINK WA BAPAK / LINK JUALAN
-                link_beli = "https://wa.me/6281802026090?text=Halo%20Kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%20dan%20tanya%20tentang%20Spirulina"
-                st.link_button("📖 Beli Ebook / Tanya Spirulina", link_beli, use_container_width=True)
+                # GANTI LINK DI BAWAH INI DENGAN LINK WA BAPAK
+                link_beli = "https://wa.me/6281234567890?text=Halo%20Pak%20Musa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar"
+                st.link_button("📖 Beli Ebook", link_beli, use_container_width=True)
 
             st.divider()
 
             # --- BAGIAN DOWNLOAD PDF ---
-            st.write("📥 **Simpan Resep Ini:**")
+            # REVISI: Kata-kata simpan
+            st.write("📥 **Simpan Panduan Ini:**")
             file_pdf = create_pdf(response.text, nama, usia)
             
             st.download_button(
                 label="📄 Download PDF (Klik Disini)",
                 data=file_pdf,
-                file_name=f"Resep_Sehat_{nama}.pdf",
+                # REVISI: Nama file PDF
+                file_name=f"Panduan_Sehat_{nama}.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
