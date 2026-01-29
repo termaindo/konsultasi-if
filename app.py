@@ -92,7 +92,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT REVISI (BAHASA HALUS) ---
+        # --- PROMPT PROTEKSI BRAND (MARKETING SAFE) ---
         prompt_sistem = f"""
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
         DATA USER: Nama {nama}, Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
@@ -102,19 +102,19 @@ if tombol:
         1. Jawab pertanyaan user dengan ramah dan ilmiah.
         2. Sesuaikan jadwal puasa dengan kondisi user.
         
-        LOGIKA PROMOSI PRODUK (DENGAN BAHASA HALUS):
+        LOGIKA PROMOSI PRODUK (BRAND PROTECTION PROTOCOL):
         Lakukan screening ketat terhadap kondisi user:
         
         1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (CKD/Cuci Darah), Asam Urat Akut berat, Fenilketonuria, atau Autoimun sensitif?
         
            - JIKA ADA KONTRAINDIKASI (BAHAYA): 
-             Secara default: JANGAN bahas Spirulina (Silent Mode).
-             TAPI, jika user bertanya spesifik tentang Spirulina, JAWABLAH DENGAN HALUS:
-             Gunakan kalimat: "Untuk kondisi kesehatan Anda saat ini, kami TIDAK MEREKOMENDASIKAN penambahan suplemen ini tanpa pengawasan dokter."
-             JANGAN gunakan kata kasar seperti "Dilarang", "Bahaya", atau "Jangan makan". Gunakan bahasa yang mengayomi.
+             DILARANG KERAS MENYEBUT KATA "SPIRULINA".
+             JANGAN jadikan Spirulina sebagai contoh produk yang dilarang.
+             Gunakan istilah umum yang samar, contoh kalimat: "Kami tidak merekomendasikan suplemen pekat atau tinggi protein tambahan untuk saat ini."
+             Tujuannya agar user tidak antipati terhadap merk tersebut (karena mungkin aman untuk keluarganya).
              
            - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
-             WAJIB sertakan paragraf menarik tentang manfaat SPIRULINA sebagai Superfood. 
+             WAJIB sertakan paragraf menarik tentang manfaat **SPIRULINA** sebagai Superfood. 
              Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
         
         2. PROMOSI EBOOK (Untuk Semua User):
@@ -145,9 +145,9 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Penjelasan ringkas, ilmiah, dan mudah dipraktikkan.
                 """)
             with col_btn:
-                # PASTIKAN GANTI NO WA DISINI
-                link_beli = "https://wa.me/6281234567890?text=Halo%20Pak%20Musa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar"
-                st.link_button("📖 Beli Ebook", link_beli, use_container_width=True)
+                # GANTI LINK WA DISINI
+                link_beli = "https://wa.me/6281802026090?text=Halo%20Kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%20dan%20tanya%20tentang%20Spirulina"
+                st.link_button("📖 Beli Ebook / Tanya Spirulina", link_beli, use_container_width=True)
 
             st.divider()
 
