@@ -105,7 +105,7 @@ if tombol:
         TUGAS WAJIB (PRODUK & KEAMANAN):
         1. ANALISA DULU: Cek apakah user memiliki riwayat Gagal Ginjal (GGK/CKD), Asam Urat Akut, atau Autoimun tertentu yang sensitif.
            - JIKA AMAN: WAJIB sertakan paragraf khusus tentang manfaat **SPIRULINA** (Superfood) yang relevan dengan keluhan mereka (misal: untuk energi, diabetes, atau kolesterol). Sarankan sebagai suplemen alami.
-           - JIKA TIDAK AMAN (ada GGK/Ginjal Berat): JANGAN sarankan Spirulina. Fokuskan saran pada diet rendah protein/kalium yang ketat dan konsultasi dokter.
+           - JIKA TIDAK AMAN (ada GGK/Ginjal Berat): JANGAN lakukan dan tampilkan pembahasan tentang Spirulina. Fokuskan saran pada diet rendah protein/kalium yang ketat dan konsultasi dokter.
         
         2. DI AKHIR SARAN (Untuk Semua User):
            Rekomendasikan membaca Ebook **"Puasa Pintar"** untuk memahami dasar ilmiah Autofagi agar puasa lebih efektif.
@@ -157,4 +157,5 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
