@@ -59,7 +59,7 @@ with st.form("form_konsultasi"):
     
     col1, col2 = st.columns(2)
     with col1:
-        usia = st.number_input("Usia (Tahun)", 15, 100, 61)
+        usia = st.number_input("Usia (Tahun)", 15, 100, 41)
         berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
     with col2:
         gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
@@ -110,7 +110,7 @@ if tombol:
         LOGIKA PROMOSI PRODUK (BRAND PROTECTION PROTOCOL):
         Lakukan screening ketat terhadap kondisi user:
         
-        1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (GGK/CKD/Cuci Darah), Asam Urat Akut berat, atau Autoimun sensitif?
+        1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (GGK/CKD/Cuci Darah), Asam Urat Akut berat, Alergi Seafood Berat, atau Autoimun sensitif?
         
            - JIKA ADA KONTRAINDIKASI (BAHAYA): 
              DILARANG KERAS MENYEBUT KATA "SPIRULINA".
@@ -120,6 +120,20 @@ if tombol:
            - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
              WAJIB sertakan paragraf menarik tentang manfaat **SPIRULINA** sebagai Superfood. 
              Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
+
+           # --- [BAGIAN UPSELL CERDAS] ---
+    if not is_kontraindikasi:
+    # JIKA AMAN (User Sehat/Cocok): Tampilkan Penawaran Spirulina
+    st.success("✅ **Pastikan SPIRULINA yang Anda konsumsi adalah yang Grade A**")
+    
+    with st.container(border=True):
+        st.markdown("""
+        SPIRULINA Grade A adalah jenis spirulina yang memiliki kualitas FOOD GRADE untuk manusia, bukan sekedar Spirulina yang hanya bisa dipakai untuk Masker Wajah, atau Spirulina yang dipakai sebagai campuran pakan ternak.
+        Kami telah melakukan kurasi (pemeriksaan khusus untuk proses produksi serta kualitas hasil produksi) dan merekomendasikan SPIRULINA Grade A di bawah ini:
+        """)
+        
+        # Tombol mengarah ke Link Pembelian (bisa Lynk.id khusus produk Spirulina)
+        st.link_button("👉 Beli Spirulina Rekomendasi drs. Musa", "https://upakara.store")      
         
         2. PROMOSI EBOOK (Untuk Semua User):
            Di akhir saran, tetap rekomendasikan Ebook **"Puasa Pintar"** sebagai panduan ilmu autofagi yang lengkap.
@@ -169,3 +183,4 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
