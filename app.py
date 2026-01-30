@@ -160,6 +160,7 @@ if tombol:
                     Berdasarkan profil Anda, **Spirulina** disarankan untuk:
                     * Memenuhi kebutuhan mikronutrisi saat jendela makan.
                     * Meningkatkan energi & detoksifikasi seluler alami.
+                    
                     Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
                     """)
                 with col_sp2:
@@ -197,3 +198,4 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
