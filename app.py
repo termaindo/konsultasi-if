@@ -121,19 +121,6 @@ if tombol:
              WAJIB sertakan paragraf menarik tentang manfaat **SPIRULINA** sebagai Superfood. 
              Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
 
-           # --- [BAGIAN UPSELL CERDAS] ---
-    if not is_kontraindikasi:
-    # JIKA AMAN (User Sehat/Cocok): Tampilkan Penawaran Spirulina
-    st.success("✅ **Pastikan SPIRULINA yang Anda konsumsi adalah yang Grade A**")
-    
-    with st.container(border=True):
-        st.markdown("""
-        SPIRULINA Grade A adalah jenis spirulina yang memiliki kualitas FOOD GRADE untuk manusia, bukan sekedar Spirulina yang hanya bisa dipakai untuk Masker Wajah, atau Spirulina yang dipakai sebagai campuran pakan ternak.
-        Kami telah melakukan kurasi (pemeriksaan khusus untuk proses produksi serta kualitas hasil produksi) dan merekomendasikan SPIRULINA Grade A di bawah ini:
-        """)
-        
-        # Tombol mengarah ke Link Pembelian (bisa Lynk.id khusus produk Spirulina)
-        st.link_button("👉 Beli Spirulina Rekomendasi drs. Musa", "https://upakara.store")      
         
         2. PROMOSI EBOOK (Untuk Semua User):
            Di akhir saran, tetap rekomendasikan Ebook **"Puasa Pintar"** sebagai panduan ilmu autofagi yang lengkap.
@@ -183,4 +170,5 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
