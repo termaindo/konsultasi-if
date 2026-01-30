@@ -68,7 +68,7 @@ with st.form("form_konsultasi"):
     bmi = berat / ((tinggi/100)**2)
 
     st.subheader("2️⃣ Riwayat Kesehatan")
-    kondisi = st.text_area("Kondisi Kesehatan:", "Sehat, tidak ada keluhan serius.", height=70)
+    kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
 
     st.subheader("3️⃣ Pertanyaan Anda")
     pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
@@ -185,3 +185,4 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
