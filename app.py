@@ -10,6 +10,16 @@ st.set_page_config(
     layout="centered"
 )
 
+# --- SCRIPT PENGHILANG MENU (DITAMBAHKAN DISINI) ---
+hide_menu_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 # --- FUNGSI PEMBUAT PDF ---
 def create_pdf(teks_analisa, nama_user, usia_user):
     pdf = FPDF()
@@ -210,5 +220,6 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
