@@ -52,6 +52,18 @@ else:
     st.stop()
 
 # --- 4. Formulir Utama ---
+# --- SISIPAN PANDUAN PENGGUNA (EXPANDER) ---
+with st.expander("ℹ️ Cara Menggunakan Aplikasi (Klik Disini)"):
+    st.markdown("""
+    1. **Isi Data Diri:** Masukkan data fisik yang akurat untuk perhitungan BMI.
+    2. **Riwayat Kesehatan:** Wajib diisi jujur (terutama jika ada sakit Maag, Diabetes, atau Ginjal) agar saran AI aman untuk Anda.
+    3. **Pertanyaan:** Tuliskan target atau keluhan spesifik Anda.
+    4. **Tombol Analisa:** Klik dan tunggu AI menyusun strategi kesehatan Anda.
+    5. **Fitur Tambahan:**
+       * Cek rekomendasi Nutrisi/Suplemen (Hanya muncul jika kondisi tubuh aman).
+       * Download hasil analisa dalam bentuk **PDF** di bagian paling bawah.
+    """)
+    
 with st.form("form_konsultasi"):
     
     st.subheader("1️⃣ Data Fisik")
@@ -198,4 +210,5 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
