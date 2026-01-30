@@ -39,7 +39,7 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     
     return pdf.output(dest="S").encode("latin-1")
 
-# --- 2. Judul & Header (UPDATE) ---
+# --- 2. Judul & Header ---
 st.title("🌱 Konsultan Hidup Sehat")
 st.markdown("Dapatkan pola Puasa Pintar (Intermittent Fasting), saran nutrisi, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
 st.divider()
@@ -92,7 +92,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT UPDATE (ISTILAH TEKNIS) ---
+        # --- PROMPT AI ---
         prompt_sistem = f"""
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
         DATA USER: Nama {nama}, Usia {usia}, Gender {gender}, BMI {bmi:.2f}, Kondisi {kondisi}.
@@ -103,60 +103,75 @@ if tombol:
         2. Sesuaikan jadwal puasa dengan kondisi user.
         
         ATURAN PENULISAN (PENTING):
-        - Jika menggunakan istilah teknis atau singkatan medis (seperti IF, TRE, CKD, GGK, GERD, dll), WAJIB tuliskan kepanjangannya saat pertama kali disebut.
-          Contoh: "Intermittent Fasting (IF)", "Gagal Ginjal Kronis (GGK)", "Time Restricted Eating (TRE)".
-          Jangan biarkan user bingung dengan singkatan.
+        - Jika menggunakan istilah teknis/singkatan (IF, TRE, CKD, GGK, dll), WAJIB tuliskan kepanjangannya saat pertama disebut.
         
         LOGIKA PROMOSI PRODUK (BRAND PROTECTION PROTOCOL):
         Lakukan screening ketat terhadap kondisi user:
         
         1. CEK KONTRAINDIKASI: Apakah user memiliki riwayat Gagal Ginjal (GGK/CKD/Cuci Darah), Asam Urat Akut berat, Alergi Seafood Berat, atau Autoimun sensitif?
+           - JIKA BAHAYA: Gunakan kalimat samar: "Kami tidak merekomendasikan suplemen pekat/tinggi protein." (Jangan sebut merk).
+           - JIKA AMAN: WAJIB jelaskan manfaat **SPIRULINA** (Superfood) sesuai keluhan user. 
+             Akhiri paragraf Spirulina dengan kalimat: "Silakan cek rekomendasi nutrisi di bawah ini."
         
-           - JIKA ADA KONTRAINDIKASI (BAHAYA): 
-             DILARANG KERAS MENYEBUT KATA "SPIRULINA".
-             JANGAN jadikan Spirulina sebagai contoh produk yang dilarang.
-             Gunakan istilah umum yang samar, contoh: "Kami tidak merekomendasikan suplemen pekat atau tinggi protein tambahan untuk saat ini."
-             
-           - JIKA AMAN (TIDAK ADA KONTRAINDIKASI): 
-             WAJIB sertakan paragraf menarik tentang manfaat **SPIRULINA** sebagai Superfood. 
-             Jelaskan manfaat spesifiknya (misal: energi, detox, atau nutrisi sel).
-
+        2. PROMOSI EBOOK:
+           Di akhir, rekomendasikan Ebook **"Puasa Pintar"**.
         
-        2. PROMOSI EBOOK (Untuk Semua User):
-           Di akhir saran, tetap rekomendasikan Ebook **"Puasa Pintar"** sebagai panduan ilmu autofagi yang lengkap.
-        
-        FORMAT: 
-        - Gunakan poin-poin (*) agar rapi. 
-        - Hindari emoji berlebihan. 
-        - Gunakan kata 'Panduan', JANGAN 'Resep'.
+        FORMAT: Gunakan poin-poin (*), hindari emoji berlebihan, gunakan kata 'Panduan'.
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan Anda...'):
             response = model.generate_content(prompt_sistem)
             
-            # Tampilkan Hasil AI
+            # Tampilkan Hasil Analisa
             st.markdown("### 💡 Panduan & Analisa Personal")
             st.markdown(response.text)
             
             st.divider()
             
-            # --- BAGIAN PROMOSI EBOOK ---
+            # --- LOGIKA PYTHON UNTUK MENAMPILKAN PROMO SPIRULINA (UPSELLING CERDAS) ---
+            # Kita filter manual di Python agar tombol benar-benar hilang jika user berisiko
+            kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
+            is_spirulina_aman = True
+            
+            # Cek apakah ada kata bahaya di kondisi user
+            for kata in kata_bahaya:
+                if kata in kondisi.lower():
+                    is_spirulina_aman = False
+                    break
+            
+            # JIKA AMAN, TAMPILKAN KOTAK PROMO SPIRULINA
+            if is_spirulina_aman:
+                st.info("🌿 **NUTRISI PENDAMPING (SUPERFOOD)**")
+                col_sp1, col_sp2 = st.columns([3, 1])
+                with col_sp1:
+                    st.markdown("""
+                    Berdasarkan profil Anda, **Spirulina** disarankan untuk:
+                    * Memenuhi kebutuhan mikronutrisi saat jendela makan.
+                    * Meningkatkan energi & detoksifikasi seluler alami.
+                    Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
+                    """)
+                with col_sp2:
+                    # GANTI NO WA DI SINI (PESAN SPIRULINA)
+                    link_spirulina = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
+                    st.link_button("🛒 Order Spirulina", link_spirulina, use_container_width=True)
+                st.divider()
+            
+            # --- BAGIAN PROMOSI EBOOK (SELALU MUNCUL) ---
             st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
             col_promo, col_btn = st.columns([2, 1])
-            
             with col_promo:
                 st.markdown("""
-                Ingin memahami sains di balik **Autofagi** dan **Penyembuhan Sel** secara utuh?
-                Baca Ebook **"Puasa Pintar"**. Penjelasan ringkas, ilmiah, dan mudah dipraktikkan.
+                Pahami sains **Autofagi & Penyembuhan Sel** secara utuh.
+                Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
                 """)
             with col_btn:
-                # PASTIKAN GANTI NO WA DISINI
-                link_beli = "https://wa.me/6281234567890?text=Halo%20Pak%20Musa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar"
-                st.link_button("📖 Beli Ebook", link_beli, use_container_width=True)
+                # GANTI NO WA DI SINI (PESAN EBOOK)
+                link_ebook = "https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%yang%20direkomendasikan%20Aplikasi%20Sehat."
+                st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
 
             st.divider()
 
-            # --- BAGIAN DOWNLOAD PDF ---
+            # --- DOWNLOAD PDF ---
             st.write("📥 **Simpan Panduan Ini:**")
             file_pdf = create_pdf(response.text, nama, usia)
             
@@ -170,5 +185,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
-
