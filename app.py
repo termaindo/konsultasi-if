@@ -10,32 +10,30 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU & FOOTER (JURUS PAMUNGKAS) ---
+# --- SCRIPT PENGHILANG MENU, FOOTER & FLOATING BUTTON (VERSI FINAL) ---
 hide_menu_style = """
 <style>
-/* 1. Hilangkan Menu Hamburger (Titik Tiga di Kanan Atas) */
+/* 1. Sembunyikan Menu Burger & Header */
 #MainMenu {visibility: hidden;}
-
-/* 2. Hilangkan Header/Garis Warna-warni di Atas */
 header {visibility: hidden;}
 
-/* 3. Hilangkan Footer "Made with Streamlit" & Icon GitHub */
+/* 2. Sembunyikan Footer "Made with Streamlit" */
 footer {visibility: hidden;}
-footer:after {
-    content:''; 
-    visibility: hidden; 
-    display: none; 
-    height: 0px;
-}
 
-/* 4. Target Spesifik untuk Versi Terbaru (Force Remove) */
-[data-testid="stFooter"] {
-    display: none !important;
-    visibility: hidden !important;
-}
+/* 3. Sembunyikan Tombol Floating (Merah/Hijau) di Kanan Bawah */
+/* Menargetkan elemen yang ID-nya mengandung kata 'status' atau 'decoration' */
+[data-testid="stStatusWidget"] {display: none !important;}
+[data-testid="stDecoration"] {display: none !important;}
+[data-testid="stToolbar"] {display: none !important;}
 
-/* 5. Hilangkan Ruang Kosong Sisa Footer */
+/* 4. Menargetkan Tombol "Manage App" (Viewer Badge) yang bandel */
+/* Menggunakan selector canggih untuk menangkap class yang namanya aneh */
+div[class^='viewerBadge_container'] { display: none !important; }
+div[data-testid="stToolbar"] { display: none !important; }
+
+/* 5. Membersihkan sisa ruang kosong */
 .block-container {
+    padding-top: 1rem !important;
     padding-bottom: 0rem !important;
 }
 </style>
@@ -242,6 +240,7 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
 
