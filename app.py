@@ -10,14 +10,28 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU (DITAMBAHKAN DISINI) ---
+# --- SCRIPT PENGHILANG MENU & FOOTER (VERSI KUAT) ---
 hide_menu_style = """
-        <style>
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
-        </style>
-        """
+<style>
+/* Sembunyikan Menu Burger (Titik Tiga) */
+#MainMenu {visibility: hidden;}
+
+/* Sembunyikan Header atas */
+header {visibility: hidden;}
+
+/* Sembunyikan Footer (Made with Streamlit) */
+footer {visibility: hidden;}
+
+/* Sembunyikan Tombol Deploy/Manage (Khusus yang bandel) */
+.stDeployButton {display:none;}
+[data-testid="stToolbar"] {visibility: hidden !important;}
+[data-testid="stDecoration"] {visibility: hidden !important;}
+[data-testid="stStatusWidget"] {visibility: hidden !important;}
+
+/* Hilangkan ruang kosong sisa header/footer */
+div.block-container {padding-top: 1rem; padding-bottom: 0rem;}
+</style>
+"""
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
 # --- FUNGSI PEMBUAT PDF ---
@@ -220,6 +234,7 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
 
