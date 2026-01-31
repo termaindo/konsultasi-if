@@ -10,26 +10,34 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU & FOOTER (VERSI KUAT) ---
+# --- SCRIPT PENGHILANG MENU & FOOTER (JURUS PAMUNGKAS) ---
 hide_menu_style = """
 <style>
-/* Sembunyikan Menu Burger (Titik Tiga) */
+/* 1. Hilangkan Menu Hamburger (Titik Tiga di Kanan Atas) */
 #MainMenu {visibility: hidden;}
 
-/* Sembunyikan Header atas */
+/* 2. Hilangkan Header/Garis Warna-warni di Atas */
 header {visibility: hidden;}
 
-/* Sembunyikan Footer (Made with Streamlit) */
+/* 3. Hilangkan Footer "Made with Streamlit" & Icon GitHub */
 footer {visibility: hidden;}
+footer:after {
+    content:''; 
+    visibility: hidden; 
+    display: none; 
+    height: 0px;
+}
 
-/* Sembunyikan Tombol Deploy/Manage (Khusus yang bandel) */
-.stDeployButton {display:none;}
-[data-testid="stToolbar"] {visibility: hidden !important;}
-[data-testid="stDecoration"] {visibility: hidden !important;}
-[data-testid="stStatusWidget"] {visibility: hidden !important;}
+/* 4. Target Spesifik untuk Versi Terbaru (Force Remove) */
+[data-testid="stFooter"] {
+    display: none !important;
+    visibility: hidden !important;
+}
 
-/* Hilangkan ruang kosong sisa header/footer */
-div.block-container {padding-top: 1rem; padding-bottom: 0rem;}
+/* 5. Hilangkan Ruang Kosong Sisa Footer */
+.block-container {
+    padding-bottom: 0rem !important;
+}
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
@@ -234,6 +242,7 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
 
