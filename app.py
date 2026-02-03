@@ -3,6 +3,21 @@ import google.generativeai as genai
 from fpdf import FPDF
 import base64
 
+# --- 0.Cek apakah password sudah benar
+if 'login_status' not in st.session_state:
+    st.session_state['login_status'] = False
+
+def check_password():
+    # Ganti 'SEHAT2025' dengan password pilihan Anda
+    if st.session_state['password_input'] == 'SEHAT2026':
+        st.session_state['login_status'] = True
+    else:
+        st.error("Password salah. Silakan cek file PDF pembelian Anda.")
+
+if not st.session_state['login_status']:
+    st.text_input("Masukkan Password Akses (Ada di PDF Pembelian):", key='password_input', on_change=check_password)
+    st.stop() # Berhenti di sini, jangan tampilkan aplikasi bawahnya
+
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
     page_title="Konsultan Hidup Sehat",
@@ -240,6 +255,7 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
 
