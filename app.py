@@ -64,6 +64,8 @@ def cek_password():
         st.markdown("""
         **Belum punya Kode Akses?**
         Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
+
+        Geser dan klik tombol di bawah ini:
         """)
         
         # Tombol Link Pembelian
@@ -255,5 +257,6 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
