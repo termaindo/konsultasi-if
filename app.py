@@ -10,22 +10,35 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU, FOOTER & TOMBOL GITHUB (VERSION ULTIMATE) ---
+# --- SCRIPT PENGHILANG MENU, FOOTER & TOMBOL FLOATING (VERSI SANGAT AGRESIF) ---
 hide_menu_style = """
 <style>
-/* Sembunyikan Menu Burger, Header, Footer */
+/* 1. Hilangkan Menu Utama & Header Atas */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
+
+/* 2. Hilangkan Footer Standard */
 footer {visibility: hidden;}
 
-/* Sembunyikan Elemen Pengganggu Spesifik */
-[data-testid="stStatusWidget"] {display: none !important;}
-[data-testid="stDecoration"] {display: none !important;}
-[data-testid="stToolbar"] {display: none !important;}
-.viewerBadge_container__1QSob {display: none !important;}
-div[class^='viewerBadge'] { display: none !important; }
+/* 3. HILANGKAN TOMBOL FLOATING (Target Spesifik) */
+/* Menghilangkan tombol 'Manage App', 'GitHub', dan logo Streamlit */
+[data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
+[data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
+[data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
 
-/* Hilangkan ruang kosong atas */
+/* 4. JURUS TERAKHIR: Menghilangkan Container "Viewer Badge" */
+/* Kode ini mencari elemen div yang class-nya mengandung kata 'viewerBadge' */
+div[class*="viewerBadge"] {
+    visibility: hidden !important;
+    display: none !important;
+}
+
+/* 5. Mencegah tombol muncul saat di-hover (jaga-jaga) */
+.stApp > header {
+    display: none !important;
+}
+
+/* 6. Hilangkan sisa ruang kosong di atas dan bawah */
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 0rem !important;
@@ -33,7 +46,6 @@ div[class^='viewerBadge'] { display: none !important; }
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
-
 # --- 2. FUNGSI GATEKEEPER (GERBANG TOL) ---
 def cek_password():
     """Fungsi untuk memblokir akses jika password salah"""
@@ -265,5 +277,6 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
