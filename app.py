@@ -26,7 +26,7 @@ div[class*="viewerBadge"] {display: none !important;}
 .viewerBadge_container__1QSob {display: none !important;}
 
 /* 3. MANUVER JARAK AMAN (PADDING BAWAH) */
-/* Memberi ruang kosong 250px di bawah agar tombol Beli tidak tertutup */
+/* Memberi ruang kosong 150px di bawah agar tombol Beli tidak tertutup */
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 250px !important; 
@@ -255,4 +255,5 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
