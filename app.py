@@ -10,52 +10,41 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU, FOOTER & TOMBOL FLOATING (VERSI SANGAT AGRESIF) ---
+# --- SCRIPT PENGHILANG MENU & PEMBERI JARAK AMAN (CSS) ---
 hide_menu_style = """
 <style>
-/* 1. Hilangkan Menu Utama & Header Atas */
+/* 1. Sembunyikan Header & Menu Utama */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
-
-/* 2. Hilangkan Footer Standard */
 footer {visibility: hidden;}
 
-/* 3. HILANGKAN TOMBOL FLOATING (Target Spesifik) */
-/* Menghilangkan tombol 'Manage App', 'GitHub', dan logo Streamlit */
-[data-testid="stToolbar"] {visibility: hidden !important; display: none !important;}
-[data-testid="stDecoration"] {visibility: hidden !important; display: none !important;}
-[data-testid="stStatusWidget"] {visibility: hidden !important; display: none !important;}
+/* 2. Sembunyikan Tombol Floating (Target Berbagai Versi) */
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stDecoration"] {display: none !important;}
+[data-testid="stStatusWidget"] {display: none !important;}
+div[class*="viewerBadge"] {display: none !important;}
+.viewerBadge_container__1QSob {display: none !important;}
 
-/* 4. JURUS TERAKHIR: Menghilangkan Container "Viewer Badge" */
-/* Kode ini mencari elemen div yang class-nya mengandung kata 'viewerBadge' */
-div[class*="viewerBadge"] {
-    visibility: hidden !important;
-    display: none !important;
-}
-
-/* 5. Mencegah tombol muncul saat di-hover (jaga-jaga) */
-.stApp > header {
-    display: none !important;
-}
-
-/* 6. Hilangkan sisa ruang kosong di atas dan bawah */
+/* 3. MANUVER JARAK AMAN (PADDING BAWAH) */
+/* Memberi ruang kosong 150px di bawah agar tombol Beli tidak tertutup */
 .block-container {
     padding-top: 2rem !important;
-    padding-bottom: 0rem !important;
+    padding-bottom: 150px !important; 
 }
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
+
 # --- 2. FUNGSI GATEKEEPER (GERBANG TOL) ---
 def cek_password():
     """Fungsi untuk memblokir akses jika password salah"""
     
-    # Judul Awal (Selalu Tampil)
+    # Judul Awal
     st.title("🌱 Konsultan Hidup Sehat")
     st.write("Selamat datang di Aplikasi Panduan Puasa & Autofagi.")
     st.divider()
 
-    # Cek apakah Password Akses sudah disetting di Secrets
+    # Cek Password di Secrets
     if "PASSWORD_AKSES" not in st.secrets:
         st.error("⚠️ Konfigurasi Server Belum Lengkap (Password Belum Disetting).")
         st.stop()
@@ -65,11 +54,11 @@ def cek_password():
 
     # LOGIKA PENGUNCIAN
     if input_pass != st.secrets["PASSWORD_AKSES"]:
-        # JIKA PASSWORD KOSONG ATAU SALAH
-        if input_pass: # Jika user mengetik tapi salah
+        # Jika salah/kosong
+        if input_pass:
             st.error("⛔ Kode Akses Salah!")
         
-        # Tampilkan Iklan / Link Pembelian
+        # Pesan Info
         st.info("🔒 Aplikasi ini dikunci khusus untuk Member Premium.")
         
         st.markdown("""
@@ -77,13 +66,17 @@ def cek_password():
         Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
         """)
         
-        # Tombol Link ke Penjualan
-        st.link_button("🛒 Beli Manual dan Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
+        # Tombol Link Pembelian
+        st.link_button("🛒 Beli Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
         
-        # HENTIKAN APLIKASI DI SINI (STOP)
+        # Tambahan Spacer Manual (Jaga-jaga jika CSS gagal di browser tertentu)
+        st.write("\n" * 5) 
+        st.caption("Klik tombol di atas untuk mendapatkan akses.")
+        
+        # HENTIKAN APLIKASI
         st.stop()
     
-    # JIKA PASSWORD BENAR, KODE AKAN LANJUT KE BAWAH...
+    # JIKA BENAR
     st.success("✅ Akses Diterima! Silakan isi data di bawah.")
     st.divider()
 
@@ -112,18 +105,18 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     # Isi Analisa
     pdf.set_font("Arial", size=11)
     
-    # Bersihkan karakter emoji agar PDF aman
+    # Bersihkan karakter emoji
     teks_bersih = teks_analisa.encode('latin-1', 'replace').decode('latin-1')
     pdf.multi_cell(0, 6, teks_bersih)
     
-    # Footer Promosi di PDF
+    # Footer PDF
     pdf.ln(10)
     pdf.set_font("Arial", 'I', 10)
     pdf.cell(0, 10, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=1, align='C')
     
     return pdf.output(dest="S").encode("latin-1")
 
-# --- 3. Cek API Key (Untuk AI) ---
+# --- 3. Cek API Key ---
 if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
 else:
@@ -158,7 +151,6 @@ with st.form("form_konsultasi"):
 
 # --- 5. Logika AI & Hasil ---
 if tombol:
-    # Indikator BMI
     st.divider()
     if bmi < 18.5:
         st.warning(f"⚠️ BMI: {bmi:.2f} (Underweight)")
@@ -186,51 +178,37 @@ if tombol:
         Kondisi: {kondisi}
         Pertanyaan: "{pertanyaan}"
         
-        INSTRUKSI KHUSUS (IKUTI SECARA DIAM-DIAM, JANGAN DITULIS DI OUTPUT):
+        INSTRUKSI KHUSUS (IKUTI SECARA DIAM-DIAM):
         
-        1. TEKNIS PENULISAN: 
-           Jika menyebut istilah singkatan (IF, TRE, CKD, GGK, dll), WAJIB tulis kepanjangannya saat pertama kali muncul.
+        1. TEKNIS: Tulis kepanjangan istilah teknis (IF, GERD, dll) saat pertama muncul.
         
-        2. LOGIKA PENYARINGAN "SPIRULINA" (SANGAT PENTING):
-           Anda harus menganalisa kondisi user terlebih dahulu.
-           
-           SKENARIO A (BAHAYA/KONTRAINDIKASI):
-           Jika user sakit Gagal Ginjal (CKD/GGK), Cuci Darah, Asam Urat Akut, atau Alergi Seafood.
-           -> TUGAS: JANGAN sebut kata "Spirulina". JANGAN bahas suplemen. JANGAN menulis "Silakan cek rekomendasi nutrisi di bawah".
-           -> Fokus saja pada makanan alami (Real Food).
+        2. LOGIKA "SPIRULINA":
+           SKENARIO A (BAHAYA - Ginjal/Asam Urat/Alergi Seafood):
+           -> JANGAN sebut kata "Spirulina". Fokus Real Food.
            
            SKENARIO B (AMAN):
-           Jika user TIDAK memiliki penyakit di atas.
-           -> TUGAS: Jelaskan manfaat Spirulina.
-           -> WAJIB MENUTUP penjelasan Spirulina dengan kalimat persis ini: "Silakan cek rekomendasi nutrisi di bawah ini."
+           -> Jelaskan manfaat Spirulina.
+           -> Tutup penjelasan dengan kalimat: "Silakan cek rekomendasi nutrisi di bawah ini."
         
-        3. OUTPUT FINAL:
-           Langsung berikan jawaban yang ramah, poin-poin panduan puasa, dan saran nutrisi.
-           JANGAN MENAMPILKAN teks aturan logika ini.
-        
-        Silakan mulai analisa sekarang:
+        3. OUTPUT: Langsung jawaban ramah & poin panduan.
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan Anda...'):
             response = model.generate_content(prompt_sistem)
             
-            # Tampilkan Hasil Analisa
             st.markdown("### 💡 Panduan & Analisa Personal")
             st.markdown(response.text)
-            
             st.divider()
             
-            # --- LOGIKA PYTHON UNTUK MENAMPILKAN PROMO SPIRULINA (UPSELLING CERDAS) ---
+            # --- LOGIKA PYTHON SPIRULINA ---
             kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
             is_spirulina_aman = True
             
-            # Cek apakah ada kata bahaya di kondisi user
             for kata in kata_bahaya:
                 if kata in kondisi.lower():
                     is_spirulina_aman = False
                     break
             
-            # JIKA AMAN, TAMPILKAN KOTAK PROMO SPIRULINA
             if is_spirulina_aman:
                 st.info("🌿 **NUTRISI PENDAMPING (SUPERFOOD)**")
                 col_sp1, col_sp2 = st.columns([3, 1])
@@ -243,12 +221,11 @@ if tombol:
                     Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
                     """)
                 with col_sp2:
-                    # GANTI NO WA DI SINI (PESAN SPIRULINA)
-                    link_spirulina = "https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
+                    link_spirulina = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
                     st.link_button("🛒 Order Spirulina", link_spirulina, use_container_width=True)
                 st.divider()
             
-            # --- BAGIAN PROMOSI EBOOK ---
+            # --- BAGIAN EBOOK ---
             st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
             col_promo, col_btn = st.columns([2, 1])
             with col_promo:
@@ -257,9 +234,7 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
                 """)
             with col_btn:
-                   # Tombol Link ke Penjualan
-                   st.link_button("🛒 Beli ebook 'Puasa Pintar: Panduan Ringkas Autofagi' (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
-                   st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
+                st.link_button("🛒 Beli ebook (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
 
             st.divider()
 
@@ -275,8 +250,8 @@ if tombol:
                 use_container_width=True
             )
             
+            # PADDING BAWAH (UNTUK HALAMAN HASIL)
+            st.write("\n" * 5)
+            
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
-
-
