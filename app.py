@@ -3,21 +3,6 @@ import google.generativeai as genai
 from fpdf import FPDF
 import base64
 
-# --- 0.Cek apakah password sudah benar
-if 'login_status' not in st.session_state:
-    st.session_state['login_status'] = False
-
-def check_password():
-    # Ganti 'SEHAT2025' dengan password pilihan Anda
-    if st.session_state['password_input'] == 'SEHAT2026':
-        st.session_state['login_status'] = True
-    else:
-        st.error("Password salah. Silakan cek file PDF pembelian Anda.")
-
-if not st.session_state['login_status']:
-    st.text_input("Masukkan Password Akses (Ada di PDF Pembelian):", key='password_input', on_change=check_password)
-    st.stop() # Berhenti di sini, jangan tampilkan aplikasi bawahnya
-
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
     page_title="Konsultan Hidup Sehat",
@@ -25,35 +10,77 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- SCRIPT PENGHILANG MENU, FOOTER & FLOATING BUTTON (VERSI FINAL) ---
+# --- SCRIPT PENGHILANG MENU, FOOTER & TOMBOL GITHUB (VERSION ULTIMATE) ---
 hide_menu_style = """
 <style>
-/* 1. Sembunyikan Menu Burger & Header */
+/* Sembunyikan Menu Burger, Header, Footer */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
-
-/* 2. Sembunyikan Footer "Made with Streamlit" */
 footer {visibility: hidden;}
 
-/* 3. Sembunyikan Tombol Floating (Merah/Hijau) di Kanan Bawah */
-/* Menargetkan elemen yang ID-nya mengandung kata 'status' atau 'decoration' */
+/* Sembunyikan Elemen Pengganggu Spesifik */
 [data-testid="stStatusWidget"] {display: none !important;}
 [data-testid="stDecoration"] {display: none !important;}
 [data-testid="stToolbar"] {display: none !important;}
+.viewerBadge_container__1QSob {display: none !important;}
+div[class^='viewerBadge'] { display: none !important; }
 
-/* 4. Menargetkan Tombol "Manage App" (Viewer Badge) yang bandel */
-/* Menggunakan selector canggih untuk menangkap class yang namanya aneh */
-div[class^='viewerBadge_container'] { display: none !important; }
-div[data-testid="stToolbar"] { display: none !important; }
-
-/* 5. Membersihkan sisa ruang kosong */
+/* Hilangkan ruang kosong atas */
 .block-container {
-    padding-top: 1rem !important;
+    padding-top: 2rem !important;
     padding-bottom: 0rem !important;
 }
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
+
+# --- 2. FUNGSI GATEKEEPER (GERBANG TOL) ---
+def cek_password():
+    """Fungsi untuk memblokir akses jika password salah"""
+    
+    # Judul Awal (Selalu Tampil)
+    st.title("🌱 Konsultan Hidup Sehat")
+    st.write("Selamat datang di Aplikasi Panduan Puasa & Autofagi.")
+    st.divider()
+
+    # Cek apakah Password Akses sudah disetting di Secrets
+    if "PASSWORD_AKSES" not in st.secrets:
+        st.error("⚠️ Konfigurasi Server Belum Lengkap (Password Belum Disetting).")
+        st.stop()
+
+    # Kotak Input Password
+    input_pass = st.text_input("🔑 Masukkan Kode Akses Premium:", type="password", placeholder="Ketik kode akses Anda di sini...")
+
+    # LOGIKA PENGUNCIAN
+    if input_pass != st.secrets["PASSWORD_AKSES"]:
+        # JIKA PASSWORD KOSONG ATAU SALAH
+        if input_pass: # Jika user mengetik tapi salah
+            st.error("⛔ Kode Akses Salah!")
+        
+        # Tampilkan Iklan / Link Pembelian
+        st.info("🔒 Aplikasi ini dikunci khusus untuk Member Premium.")
+        
+        st.markdown("""
+        **Belum punya Kode Akses?**
+        Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
+        """)
+        
+        # Tombol Link ke Penjualan
+        st.link_button("🛒 Beli Manual dan Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
+        
+        # HENTIKAN APLIKASI DI SINI (STOP)
+        st.stop()
+    
+    # JIKA PASSWORD BENAR, KODE AKAN LANJUT KE BAWAH...
+    st.success("✅ Akses Diterima! Silakan isi data di bawah.")
+    st.divider()
+
+# --- JALANKAN CEK PASSWORD DULU ---
+cek_password()
+
+# =========================================================================
+# AREA DI BAWAH INI HANYA AKAN MUNCUL JIKA PASSWORD BENAR
+# =========================================================================
 
 # --- FUNGSI PEMBUAT PDF ---
 def create_pdf(teks_analisa, nama_user, usia_user):
@@ -84,12 +111,7 @@ def create_pdf(teks_analisa, nama_user, usia_user):
     
     return pdf.output(dest="S").encode("latin-1")
 
-# --- 2. Judul & Header ---
-st.title("🌱 Konsultan Hidup Sehat")
-st.markdown("Dapatkan pola Puasa Pintar (Intermittent Fasting), saran nutrisi, dan strategi **Autofagi** sesuai kondisi tubuh Anda.")
-st.divider()
-
-# --- 3. Cek API Key ---
+# --- 3. Cek API Key (Untuk AI) ---
 if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
 else:
@@ -97,19 +119,9 @@ else:
     st.stop()
 
 # --- 4. Formulir Utama ---
-# --- SISIPAN PANDUAN PENGGUNA (EXPANDER) ---
-with st.expander("ℹ️ Cara Menggunakan Aplikasi (Klik Disini)"):
-    st.markdown("""
-    1. **Isi Data Diri:** Masukkan data fisik yang akurat untuk perhitungan BMI.
-    2. **Riwayat Kesehatan:** Wajib diisi jujur (terutama jika ada sakit Maag, Diabetes, atau Ginjal) agar saran AI aman untuk Anda.
-    3. **Pertanyaan:** Tuliskan target atau keluhan spesifik Anda.
-    4. **Tombol Analisa:** Klik dan tunggu AI menyusun strategi kesehatan Anda.
-    5. **Fitur Tambahan:**
-       * Cek rekomendasi Nutrisi/Suplemen (Hanya muncul jika kondisi tubuh aman).
-       * Download hasil analisa dalam bentuk **PDF** di bagian paling bawah.
-    """)
-    
 with st.form("form_konsultasi"):
+    
+    st.markdown("### 📝 Data Diri")
     
     st.subheader("1️⃣ Data Fisik")
     nama = st.text_input("Nama Panggilan", "Sobat Sehat")
@@ -149,7 +161,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT AI (REVISI TOTAL AGAR TIDAK BOCOR) ---
+        # --- PROMPT AI ---
         prompt_sistem = f"""
         PERAN ANDA:
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
@@ -183,7 +195,6 @@ if tombol:
         3. OUTPUT FINAL:
            Langsung berikan jawaban yang ramah, poin-poin panduan puasa, dan saran nutrisi.
            JANGAN MENAMPILKAN teks aturan logika ini.
-           JANGAN MENULIS judul "Brand Protection Protocol".
         
         Silakan mulai analisa sekarang:
         """
@@ -198,7 +209,6 @@ if tombol:
             st.divider()
             
             # --- LOGIKA PYTHON UNTUK MENAMPILKAN PROMO SPIRULINA (UPSELLING CERDAS) ---
-            # Kita filter manual di Python agar tombol benar-benar hilang jika user berisiko
             kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
             is_spirulina_aman = True
             
@@ -217,16 +227,16 @@ if tombol:
                     Berdasarkan profil Anda, **Spirulina** disarankan untuk:
                     * Memenuhi kebutuhan mikronutrisi saat jendela makan.
                     * Meningkatkan energi & detoksifikasi seluler alami.
-                    
+
                     Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
                     """)
                 with col_sp2:
                     # GANTI NO WA DI SINI (PESAN SPIRULINA)
-                    link_spirulina = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
+                    link_spirulina = "https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
                     st.link_button("🛒 Order Spirulina", link_spirulina, use_container_width=True)
                 st.divider()
             
-            # --- BAGIAN PROMOSI EBOOK (SELALU MUNCUL) ---
+            # --- BAGIAN PROMOSI EBOOK ---
             st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
             col_promo, col_btn = st.columns([2, 1])
             with col_promo:
@@ -235,9 +245,9 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
                 """)
             with col_btn:
-                # GANTI NO WA DI SINI (PESAN EBOOK)
-                link_ebook = "https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%yang%20direkomendasikan%20Aplikasi%20Sehat."
-                st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
+                   # Tombol Link ke Penjualan
+                   st.link_button("🛒 Beli Manual dan Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
+                   st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
 
             st.divider()
 
@@ -255,10 +265,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
-
-
-
-
-
-
