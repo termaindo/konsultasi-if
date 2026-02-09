@@ -246,7 +246,7 @@ if tombol:
                 """)
             with col_btn:
                    # Tombol Link ke Penjualan
-                   st.link_button("🛒 Beli ebook "Puasa Pintar: Panduan Ringkas Autofagi" (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
+                   st.link_button("🛒 Beli ebook 'Puasa Pintar: Panduan Ringkas Autofagi' (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
                    st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
 
             st.divider()
@@ -265,4 +265,5 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
