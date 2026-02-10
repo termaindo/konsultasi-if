@@ -63,7 +63,7 @@ def cek_password():
         
         st.markdown("""
         **Belum punya Kode Akses?**
-        Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
+        Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup hanya dengan 1x bayar, berlaku seumur hidup & biaya terjangkau.
 
         Geser dan klik tombol order di bawah ini:
         """)
@@ -257,6 +257,7 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
 
 
 
