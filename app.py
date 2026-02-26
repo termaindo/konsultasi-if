@@ -190,10 +190,27 @@ if tombol:
            -> Jelaskan manfaat Spirulina.
            -> Tutup penjelasan dengan kalimat: "Silakan cek rekomendasi nutrisi di bawah ini."
         
-        3. OUTPUT: Langsung jawaban ramah & poin panduan.
+        3. OUTPUT: Langsung berikan jawaban yang ramah dan sistematis dalam bentuk poin panduan.
+        
+        4. ANALISA PUASA PANJANG (PROLONGED FASTING 48 - 72 JAM):
+           Buat satu bagian khusus berjudul "Analisa Kelayakan Puasa Panjang (48-72 Jam)".
+           Lakukan evaluasi ketat berdasarkan parameter user di atas (Usia, Gender, BMI, Kondisi).
+           Gunakan dasar kajian ilmiah umum (misal: kajian autofagi Dr. Yoshinori Ohsumi atau regenerasi sel punca Dr. Valter Longo).
+           
+           - JIKA TIDAK AMAN (Kriteria: BMI < 18.5, Usia lanjut di atas 65 tahun, punya riwayat penyakit berat seperti Ginjal/Jantung/Diabetes tipe 1/Kondisi lemah, atau Hamil/Menyusui):
+             Berikan kesimpulan tegas bahwa Puasa 48-72 jam TIDAK DIREKOMENDASIKAN. 
+             Jelaskan ALASAN ILMIAH mengapa berbahaya bagi kondisi spesifik mereka (misal: risiko malnutrisi, hilangnya massa otot, atau komplikasi ginjal). Arahkan mereka cukup ke puasa 12-16 jam saja.
+             
+           - JIKA AMAN (Kriteria: Dewasa sehat, BMI Normal/Overweight/Obese, tidak ada penyakit kronis sensitif):
+             Berikan kesimpulan bahwa Puasa 48-72 jam MEMUNGKINKAN.
+             a) ALASAN: Jelaskan ilmiahnya (misal: cadangan lemak mencukupi untuk ketosis, kondisi fisik stabil).
+             b) PENTAHAPAN (Wajib): Jelaskan adaptasinya perlahan. Jangan langsung 72 jam. Mulai dari 16:8 -> 24 jam (OMAD) -> 36 jam -> 48 jam -> 72 jam.
+             c) TIMING: Sarankan waktu yang tepat (misal: saat beban kerja rendah, weekend, minim stres).
+             d) MANFAAT ILMIAH: Jelaskan apa yang terjadi di tubuh pada jam ke-48 s/d 72 (Deep Autophagy pembersihan sel mati, penurunan radang, regenerasi stem cell/sistem imun).
+             e) PERINGATAN ELEKTROLIT: Tegaskan secara mutlak pentingnya konsumsi air mineral dan Elektrolit murni (Natrium/Garam Himalaya, Kalium, Magnesium) selama puasa untuk mencegah kram dan dehidrasi sel.
         """
         
-        with st.spinner('Sedang menyusun panduan kesehatan Anda...'):
+        with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
             response = model.generate_content(prompt_sistem)
             
             st.markdown("### 💡 Panduan & Analisa Personal")
