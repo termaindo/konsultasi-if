@@ -209,6 +209,21 @@ if tombol:
              e) Timing Pelaksanaan: Sarankan waktu yang tepat (saat tingkat stres rendah, akhir pekan, atau sedang libur aktivitas fisik berat).
              f) Manfaat Ilmiah: Jelaskan manfaat jam ke-48 s/d 72 (Deep Autophagy, pembersihan protein rusak, penurunan inflamasi sistemik, dan *stem cell regeneration* / peremajaan sistem imun).
              g) Peringatan Elektrolit: Wajibkan asupan air mineral dan Elektrolit murni (Natrium, Kalium, Magnesium) selama puasa untuk mencegah dehidrasi seluler.
+             
+        5. POLA HARIAN DALAM SEMINGGU (WEEKLY DAILY ROUTINE):
+           Buat bagian berjudul "Pola Puasa Harian dalam Seminggu".
+           Berikan rekomendasi jadwal jendela puasa (Fasting Window) dan jendela makan (Eating Window) untuk 7 hari (Senin-Minggu).
+           
+           - JIKA USER PEMULA, LANSIA, ATAU KONDISI RENTAN: 
+             Berikan pola yang KONSISTEN (SAMA) setiap hari (misalnya: 16:8 setiap hari). 
+             Alasan: Tubuh memerlukan stabilitas ritme sirkadian untuk beradaptasi, membentuk kebiasaan, dan mencegah stres metabolik berlebihan.
+             
+           - JIKA USER SEHAT, TERBIASA, ATAU TARGET PENURUNAN BB / DEEP AUTOPHAGY: 
+             Berikan pola BERSELANG-SELING (Metabolic Flexibility / Metabolic Confusion). 
+             Contoh: Senin & Kamis puasa OMAD (24 jam), Selasa-Rabu-Jumat puasa 16:8, Sabtu & Minggu puasa santai 12:12 atau 14:10 (sebagai hari *refeeding*).
+             Alasan: Meniru pola makan evolusioner leluhur kita, mencegah laju metabolisme basal melambat (menghindari fase plateau), dan menjaga keseimbangan hormon tiroid/leptin.
+             
+           Format keluaran harus berupa daftar hari yang mudah dibaca (Senin sampai Minggu).
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
