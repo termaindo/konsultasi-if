@@ -192,22 +192,23 @@ if tombol:
         
         3. OUTPUT: Langsung berikan jawaban yang ramah dan sistematis dalam bentuk poin panduan.
         
-        4. ANALISA PUASA PANJANG (PROLONGED FASTING 48 - 72 JAM):
-           Buat satu bagian khusus berjudul "Analisa Kelayakan Puasa Panjang (48-72 Jam)".
+        4. ANALISA PUASA PANJANG (PROLONGED FASTING) & OMAD:
+           Buat bagian khusus berjudul "Analisa Kelayakan Puasa Panjang & Berkala".
            Lakukan evaluasi ketat berdasarkan parameter user di atas (Usia, Gender, BMI, Kondisi).
-           Gunakan dasar kajian ilmiah umum (misal: kajian autofagi Dr. Yoshinori Ohsumi atau regenerasi sel punca Dr. Valter Longo).
+           Gunakan dasar kajian ilmiah umum (misal: kajian autofagi Dr. Yoshinori Ohsumi, regenerasi sel punca Dr. Valter Longo).
            
-           - JIKA TIDAK AMAN (Kriteria: BMI < 18.5, Usia lanjut di atas 65 tahun, punya riwayat penyakit berat seperti Ginjal/Jantung/Diabetes tipe 1/Kondisi lemah, atau Hamil/Menyusui):
-             Berikan kesimpulan tegas bahwa Puasa 48-72 jam TIDAK DIREKOMENDASIKAN. 
-             Jelaskan ALASAN ILMIAH mengapa berbahaya bagi kondisi spesifik mereka (misal: risiko malnutrisi, hilangnya massa otot, atau komplikasi ginjal). Arahkan mereka cukup ke puasa 12-16 jam saja.
+           - JIKA TIDAK AMAN UNTUK 48-72 JAM (Kriteria: BMI < 18.5, Usia lanjut, ada riwayat Ginjal/Jantung/Diabetes tipe 1/Kondisi lemah):
+             a) Kesimpulan Tegas: Jelaskan secara ilmiah mengapa puasa 48-72 jam TIDAK DIREKOMENDASIKAN untuk profil ini (misal: risiko kehilangan massa otot, beban metabolik berlebih, atau ketidakstabilan gula darah).
+             b) Alternatif OMAD (One Meal A Day / 24 Jam): Evaluasi apakah OMAD masih memungkinkan. Jika memungkinkan, berikan rekomendasi INTERVAL AMAN (misalnya: maksimal 1 hingga 2 kali seminggu, jangan setiap hari). Tegaskan pentingnya kepadatan nutrisi saat berbuka puasa untuk mencegah malnutrisi.
              
-           - JIKA AMAN (Kriteria: Dewasa sehat, BMI Normal/Overweight/Obese, tidak ada penyakit kronis sensitif):
-             Berikan kesimpulan bahwa Puasa 48-72 jam MEMUNGKINKAN.
-             a) ALASAN: Jelaskan ilmiahnya (misal: cadangan lemak mencukupi untuk ketosis, kondisi fisik stabil).
-             b) PENTAHAPAN (Wajib): Jelaskan adaptasinya perlahan. Jangan langsung 72 jam. Mulai dari 16:8 -> 24 jam (OMAD) -> 36 jam -> 48 jam -> 72 jam.
-             c) TIMING: Sarankan waktu yang tepat (misal: saat beban kerja rendah, weekend, minim stres).
-             d) MANFAAT ILMIAH: Jelaskan apa yang terjadi di tubuh pada jam ke-48 s/d 72 (Deep Autophagy pembersihan sel mati, penurunan radang, regenerasi stem cell/sistem imun).
-             e) PERINGATAN ELEKTROLIT: Tegaskan secara mutlak pentingnya konsumsi air mineral dan Elektrolit murni (Natrium/Garam Himalaya, Kalium, Magnesium) selama puasa untuk mencegah kram dan dehidrasi sel.
+           - JIKA AMAN UNTUK 48-72 JAM (Kriteria: Dewasa sehat, BMI Normal/Overweight/Obese, tidak ada penyakit kronis sensitif):
+             a) Kesimpulan: Puasa 48-72 jam MEMUNGKINKAN dan direkomendasikan.
+             b) Tanda Kesiapan Fisik (Readiness): Jelaskan indikator bahwa tubuh sudah siap (misalnya: tubuh sudah "Fat-Adapted", mampu puasa 24 jam / OMAD tanpa rasa lapar berlebih, pusing, atau gemetar).
+             c) Pentahapan (Wajib): Jelaskan adaptasi bertahap. Mulai dari rutinitas 16:8 -> beranjak ke OMAD (24 jam) -> puasa 36 jam -> 48 jam -> baru kemudian 72 jam.
+             d) Interval / Frekuensi Pelaksanaan: Beri pedoman waktu (misalnya: Puasa 48-72 jam cukup dilakukan 1 kali sebulan atau 1 kali per kuartal, sementara OMAD bisa 2-3 kali seminggu).
+             e) Timing Pelaksanaan: Sarankan waktu yang tepat (saat tingkat stres rendah, akhir pekan, atau sedang libur aktivitas fisik berat).
+             f) Manfaat Ilmiah: Jelaskan manfaat jam ke-48 s/d 72 (Deep Autophagy, pembersihan protein rusak, penurunan inflamasi sistemik, dan *stem cell regeneration* / peremajaan sistem imun).
+             g) Peringatan Elektrolit: Wajibkan asupan air mineral dan Elektrolit murni (Natrium, Kalium, Magnesium) selama puasa untuk mencegah dehidrasi seluler.
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
