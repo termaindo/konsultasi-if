@@ -75,9 +75,9 @@ def cek_password():
         """
         st.markdown(html_logo, unsafe_allow_html=True)
     
-    # Judul Awal & Subjudul
+    # Judul Awal & Subjudul (Diperbarui dengan font lebih kecil dan warna putih kontras)
     st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
-    st.markdown("<h4 style='text-align: center; color: #555555; font-weight: normal; margin-bottom: 20px;'>Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif</h4>", unsafe_allow_html=True)
+    st.markdown("<h5 style='text-align: center; color: #FFFFFF; font-weight: normal; font-size: 15px; margin-bottom: 20px; line-height: 1.4;'>Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif</h5>", unsafe_allow_html=True)
     st.divider()
 
     # Cek Password di Secrets
