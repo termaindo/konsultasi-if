@@ -49,15 +49,34 @@ st.markdown(hide_menu_style, unsafe_allow_html=True)
 def cek_password():
     """Fungsi untuk memblokir akses jika password salah"""
     
-    # --- MENAMPILKAN LOGO DI WEB (TENGAH ATAS) ---
+    # --- MENAMPILKAN LOGO DI WEB (LINGKARAN PUTIH & BINGKAI EMAS) ---
     logo_path = "Logo_Aplikasi_Sehat.png"
     if os.path.exists(logo_path):
-        col_logo1, col_logo2, col_logo3 = st.columns([1, 1.5, 1])
-        with col_logo2:
-            st.image(logo_path, use_container_width=True)
+        # Membaca gambar menjadi Base64 agar bisa diatur presisi dengan HTML/CSS
+        with open(logo_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode()
+            
+        html_logo = f"""
+        <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+            <div style="
+                background-color: white; 
+                border: 4px solid #DAA520; /* Warna Emas */
+                border-radius: 50%; /* Membuatnya bulat sempurna */
+                width: 130px; 
+                height: 130px; 
+                display: flex; 
+                justify-content: center; 
+                align-items: center; 
+                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Efek bayangan elegan */
+                overflow: hidden;">
+                <img src="data:image/png;base64,{encoded_string}" style="width: 75%; height: auto;">
+            </div>
+        </div>
+        """
+        st.markdown(html_logo, unsafe_allow_html=True)
     
     # Judul Awal
-    st.markdown("<h1 style='text-align: center;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
     st.write("Selamat datang di Aplikasi Panduan Puasa Intermiten (Intermittent Fasting)"
              " sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan"
              " agar Bisa Mendapatkan Autofagi yang Efektif.")
