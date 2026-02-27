@@ -205,11 +205,13 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
             pdf.set_font("Arial", '', 11)
             pdf.multi_cell(0, 6, baris_pdf)
             
-    # Footer Promosi di PDF
+    # Footer Promosi di PDF (Diperbarui dengan Hyperlink Toko)
     pdf.ln(15)
     pdf.set_font("Arial", 'I', 10)
     pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 10, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=1, align='C')
+    pdf.cell(0, 5, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=True, align='C')
+    pdf.set_text_color(0, 0, 255) # Warna biru untuk link
+    pdf.cell(0, 5, "https://lynk.id/hahastoresby", ln=True, align='C', link="https://lynk.id/hahastoresby")
     
     return pdf.output(dest="S").encode("latin-1")
 
@@ -362,7 +364,8 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
                 """)
             with col_btn:
-                link_ebook = "https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20mau%20beli%20Ebook%20Puasa%20Pintar%yang%20direkomendasikan%20Aplikasi%20Sehat."
+                # Tautan diperbarui mengarah ke Lynk.id
+                link_ebook = "https://lynk.id/hahastoresby"
                 st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
 
             st.divider()
