@@ -41,7 +41,9 @@ def cek_password():
     
     # Judul Awal
     st.title("🌱 Konsultan Hidup Sehat")
-    st.write("Selamat datang di Aplikasi Panduan Puasa & Autofagi.")
+    st.write("Selamat datang di Aplikasi Panduan Puasa Intermiten (Intermittent Fasting)"
+             "sesuai Usia, Jenis Kelamin, BMI, dan Riwayat Kesehatan"
+             "agar Mencapai Autofagi yang Efektif.")
     st.divider()
 
     # Cek Password di Secrets
@@ -289,3 +291,4 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
+
