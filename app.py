@@ -113,14 +113,14 @@ cek_password()
 # AREA DI BAWAH INI HANYA AKAN MUNCUL JIKA PASSWORD BENAR
 # =========================================================================
 
-# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN HEADER BOX HITAM PREMIUM) ---
+# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN HEADER BOX HITAM PREMIUM & SUBJUDUL) ---
 def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Sehat.png"):
     pdf = FPDF()
     pdf.add_page()
     
     # --- 1. HEADER BOX HITAM ---
     pdf.set_fill_color(20, 20, 20)  # Warna Hitam (Almost Black)
-    pdf.rect(0, 0, 210, 25, 'F')    # Lebar A4 = 210mm
+    pdf.rect(0, 0, 210, 32, 'F')    # Lebar A4 = 210mm, Tinggi dinaikkan ke 32mm untuk subjudul
     
     # Cari lokasi logo
     if not os.path.exists(logo_path):
@@ -129,26 +129,33 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
 
     # a) LOGO DENGAN LINGKARAN PUTIH & BINGKAI EMAS
     if os.path.exists(logo_path):
-        # Bingkai Lingkaran Emas Luar
+        # Bingkai Lingkaran Emas Luar (Posisi Y disesuaikan agar di tengah box)
         pdf.set_fill_color(218, 165, 32) # Goldenrod color
         pdf.set_draw_color(218, 165, 32)
-        pdf.ellipse(9, 2, 21, 21, 'F')
+        pdf.ellipse(9, 5, 22, 22, 'F')
         
         # Latar Lingkaran Putih Dalam
         pdf.set_fill_color(255, 255, 255) # Putih
-        pdf.ellipse(9.5, 2.5, 20, 20, 'F')
+        pdf.ellipse(9.5, 5.5, 21, 21, 'F')
         
         # Cetak Gambar Logo di Atas Lingkaran Putih
-        pdf.image(logo_path, x=10.5, y=3.5, w=18, h=18)
+        pdf.image(logo_path, x=10.5, y=6.5, w=19, h=19)
     
-    # b) NAMA APLIKASI (Teks Putih) - Emoji dilepas agar fpdf tidak error
+    # b) NAMA APLIKASI (Teks Putih)
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Arial", 'B', 16)
-    pdf.set_xy(35, 8) 
-    pdf.cell(0, 10, "Konsultan Hidup Sehat", ln=True)
+    pdf.set_xy(35, 6) 
+    pdf.cell(0, 8, "Konsultan Hidup Sehat", ln=True)
+
+    # c) SUBJUDUL APLIKASI (Warna abu keputihan, font lebih kecil)
+    pdf.set_font("Arial", '', 9)
+    pdf.set_text_color(220, 220, 220)
+    pdf.set_xy(35, 14)
+    subjudul = "Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif"
+    pdf.multi_cell(165, 5, subjudul)
     
     # Reset posisi Y ke bawah kotak hitam
-    pdf.set_y(28)
+    pdf.set_y(35)
     
     # --- 2. HYPERLINK SUMBER ---
     pdf.set_font("Arial", 'I', 10)
