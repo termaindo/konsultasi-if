@@ -178,72 +178,47 @@ if tombol:
         Kondisi: {kondisi}
         Pertanyaan: "{pertanyaan}"
         
-        INSTRUKSI KHUSUS (IKUTI SECARA DIAM-DIAM):
+        INSTRUKSI KHUSUS & FORMAT OUTPUT (IKUTI SECARA KETAT):
         
-        1. TEKNIS: Tulis kepanjangan istilah teknis (IF, GERD, dll) saat pertama muncul.
+        ATURAN UMUM:
+        - Tulis kepanjangan istilah teknis (IF, GERD, dll) saat pertama muncul.
+        - WAJIB gunakan istilah "Pemutusan / Buka Puasa" (Jangan gunakan kalimat "Pemutusan puasa" saja atau "Berbuka puasa" saja).
+        - Kurangi penggunaan emoji agar dokumen rapi saat dicetak ke PDF.
+        - WAJIB gunakan struktur angka Romawi (I sampai VI) persis seperti di bawah ini.
         
-        2. LOGIKA "SPIRULINA":
-           SKENARIO A (BAHAYA - Ginjal/Asam Urat/Alergi Seafood):
-           -> JANGAN sebut kata "Spirulina". Fokus Real Food.
-           
-           SKENARIO B (AMAN):
-           -> Jelaskan manfaat Spirulina.
-           -> Tutup penjelasan dengan kalimat: "Silakan cek rekomendasi nutrisi di bawah ini."
+        STRUKTUR LAPORAN HARUS SEPERTI INI:
         
-        3. OUTPUT: Langsung berikan jawaban yang ramah dan sistematis dalam bentuk poin panduan.
+        Salam Pembuka: Berikan salam yang hangat menyapa "{nama}" dan kata pengantar yang empatik serta memotivasi terkait kondisi/pertanyaannya.
         
-        4. ANALISA PUASA PANJANG (PROLONGED FASTING) & OMAD:
-           Buat bagian khusus berjudul "Analisa Kelayakan Puasa Panjang & Berkala".
-           Lakukan evaluasi ketat berdasarkan parameter user di atas (Usia, Gender, BMI, Kondisi).
-           Gunakan dasar kajian ilmiah umum (misal: kajian autofagi Dr. Yoshinori Ohsumi, regenerasi sel punca Dr. Valter Longo).
-           
-           - JIKA TIDAK AMAN UNTUK 48-72 JAM (Kriteria: BMI < 18.5, Usia lanjut, ada riwayat Ginjal/Jantung/Diabetes tipe 1/Kondisi lemah):
-             a) Kesimpulan Tegas: Jelaskan secara ilmiah mengapa puasa 48-72 jam TIDAK DIREKOMENDASIKAN untuk profil ini (misal: risiko kehilangan massa otot, beban metabolik berlebih, atau ketidakstabilan gula darah).
-             b) Alternatif OMAD (One Meal A Day / 24 Jam): Evaluasi apakah OMAD masih memungkinkan. Jika memungkinkan, berikan rekomendasi INTERVAL AMAN (misalnya: maksimal 1 hingga 2 kali seminggu, jangan setiap hari). Tegaskan pentingnya kepadatan nutrisi saat berbuka puasa untuk mencegah malnutrisi.
-             
-           - JIKA AMAN UNTUK 48-72 JAM (Kriteria: Dewasa sehat, BMI Normal/Overweight/Obese, tidak ada penyakit kronis sensitif):
-             a) Kesimpulan: Puasa 48-72 jam MEMUNGKINKAN dan direkomendasikan.
-             b) Tanda Kesiapan Fisik (Readiness): Jelaskan indikator bahwa tubuh sudah siap (misalnya: tubuh sudah "Fat-Adapted", mampu puasa 24 jam / OMAD tanpa rasa lapar berlebih, pusing, atau gemetar).
-             c) Pentahapan (Wajib): Jelaskan adaptasi bertahap. Mulai dari rutinitas 16:8 -> beranjak ke OMAD (24 jam) -> puasa 36 jam -> 48 jam -> baru kemudian 72 jam.
-             d) Interval / Frekuensi Pelaksanaan: Beri pedoman waktu (misalnya: Puasa 48-72 jam cukup dilakukan 1 kali sebulan atau 1 kali per kuartal, sementara OMAD bisa 2-3 kali seminggu).
-             e) Timing Pelaksanaan: Sarankan waktu yang tepat (saat tingkat stres rendah, akhir pekan, atau sedang libur aktivitas fisik berat).
-             f) Manfaat Ilmiah: Jelaskan manfaat jam ke-48 s/d 72 (Deep Autophagy, pembersihan protein rusak, penurunan inflamasi sistemik, dan *stem cell regeneration* / peremajaan sistem imun).
-             g) Peringatan Elektrolit: Wajibkan asupan air mineral dan Elektrolit murni (Natrium, Kalium, Magnesium) selama puasa untuk mencegah dehidrasi seluler.
-             
-        5. POLA HARIAN DALAM SEMINGGU (WEEKLY DAILY ROUTINE):
-           Buat bagian berjudul "Pola Puasa Harian dalam Seminggu".
-           Berikan rekomendasi jadwal jendela puasa (Fasting Window) dan jendela makan (Eating Window) untuk 7 hari (Senin-Minggu).
-           
-           - JIKA USER PEMULA, LANSIA, ATAU KONDISI RENTAN: 
-             Berikan pola yang KONSISTEN (SAMA) setiap hari (misalnya: 16:8 setiap hari). 
-             Alasan: Tubuh memerlukan stabilitas ritme sirkadian untuk beradaptasi, membentuk kebiasaan, dan mencegah stres metabolik berlebihan.
-             
-           - JIKA USER SEHAT, TERBIASA, ATAU TARGET PENURUNAN BB / DEEP AUTOPHAGY: 
-             Berikan pola BERSELANG-SELING (Metabolic Flexibility / Metabolic Confusion). 
-             Contoh: Senin & Kamis puasa OMAD (24 jam), Selasa-Rabu-Jumat puasa 16:8, Sabtu & Minggu puasa santai 12:12 atau 14:10 (sebagai hari *refeeding*).
-             Alasan: Meniru pola makan evolusioner leluhur kita, mencegah laju metabolisme basal melambat (menghindari fase plateau), dan menjaga keseimbangan hormon tiroid/leptin.
-             
-           Format keluaran harus berupa daftar hari yang mudah dibaca (Senin sampai Minggu).
-           
-        6. POLA OLAHRAGA & AKTIVITAS FISIK (EXERCISE ROUTINE):
-           Buat bagian khusus berjudul "Saran Olahraga & Waktu Pelaksanaan".
-           Sesuaikan rekomendasi jenis olahraga dan *timing*-nya secara rasional berdasarkan parameter Usia, BMI, dan Kondisi Kesehatan.
-           
-           - JENIS OLAHRAGA: 
-             Jika Lansia (>60 th) atau Kondisi Rentan: Fokus pada peregangan, mobilitas, jalan santai, dan Latihan Beban Ringan (untuk mencegah sarkopenia / penyusutan otot dan menjaga kepadatan tulang). Hindari olahraga *high-impact*.
-             Jika Dewasa Sehat/Overweight: Kombinasikan Kardio LISS (Low-Intensity Steady State seperti jalan cepat/berenang) untuk membakar lemak, dan Latihan Beban (*Resistance Training*) untuk meningkatkan metabolisme basal.
-             
-           - TIMING (WAKTU PELAKSANAAN TERBAIK):
-             a) Di Jendela Puasa (Fasted State): Sangat disarankan untuk melakukan Olahraga Intensitas Rendah-Sedang (LISS Kardio) di pagi hari atau menjelang waktu berbuka. Jelaskan alasannya: kadar insulin yang rendah membuat tubuh terpaksa menggunakan cadangan lemak sebagai energi utama (*Fat Oxidation* maksimal) dan memicu lonjakan Hormon Pertumbuhan (HGH) untuk melindungi otot.
-             b) Di Jendela Makan (Fed State): Disarankan untuk Latihan Beban Berat (*Heavy Lifting*) atau HIIT (*High-Intensity Interval Training*). Jelaskan alasannya: olahraga intensitas tinggi membutuhkan glikogen otot, yang hanya tersedia cukup setelah kita makan. Asupan protein di jendela makan ini juga akan langsung dipakai untuk memperbaiki dan membesarkan sel otot (*Muscle Protein Synthesis*).
-             
-           - PERINGATAN SAAT PUASA PANJANG: Tegaskan secara mutlak bahwa apabila user sedang menjalankan Puasa Panjang (48-72 Jam), olahraga berat HARUS DIHENTIKAN. Cukup lakukan peregangan ringan, meditasi, atau jalan kaki santai. Olahraga berat saat puasa berkepanjangan dapat memicu pemecahan massa otot (*gluconeogenesis* berlebih) dan lonjakan stres kortisol yang membahayakan.
+        I. Analisa Kondisi Saat Ini
+        Berikan evaluasi singkat mengenai status BMI, Usia, dan Kondisi Kesehatan user saat ini, serta jawab secara ringkas keluhan utama mereka.
+        
+        II. Pola Puasa Harian dalam Seminggu (Weekly Daily Routine)
+        - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal 16:8 setiap hari) agar ritme sirkadian stabil.
+        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), 16:8, dan 12:12.
+        - Tuliskan rincian jadwal hariannya (Senin sampai Minggu).
+        
+        III. Saran Olahraga & Waktu Pelaksanaan
+        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
+        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
+        
+        IV. Panduan Pemutusan / Buka Puasa (Break the Fast)
+        Jelaskan urutan yang benar dan aman untuk melakukan "Pemutusan / Buka Puasa" agar gula darah tidak melonjak tajam (Contoh: mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke porsi karbohidrat kompleks).
+        
+        V. Analisa Kelayakan Puasa Panjang & Berkala
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, kondisi lemah/penyakit kronis berat): Nyatakan TIDAK DIREKOMENDASIKAN untuk 48-72 jam, jelaskan risiko medisnya (malnutrisi/hilang massa otot). Beri alternatif batas aman maksimal (misal OMAD 24 jam) dengan interval 1-2x seminggu.
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan (16:8 -> 24 -> 36 -> 48 -> 72), Interval (misal 1x sebulan), Timing (saat rileks), Manfaat (Autofagi, Regenerasi Stem Cell dari Dr. Valter Longo/Yoshinori Ohsumi), dan Peringatan Elektrolit.
+        
+        VI. Rekomendasi Nutrisi Pendamping
+        Lakukan *screening* otomatis di otak Anda:
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas pentingnya asupan alami (Real Food) utuh.
+        - Jika AMAN: Jelaskan kehebatan Spirulina sebagai superfood pengiring puasa. WAJIB tutup bagian ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
             response = model.generate_content(prompt_sistem)
             
-            st.markdown("### 💡 Panduan & Analisa Personal")
+            st.markdown("### 💡 Laporan & Analisa Personal")
             st.markdown(response.text)
             st.divider()
             
