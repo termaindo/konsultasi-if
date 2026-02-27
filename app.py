@@ -37,6 +37,7 @@ h3 {
     color: #0066cc; /* Warna biru untuk judul di Web */
     border-bottom: 2px solid #f0f2f6;
     padding-bottom: 5px;
+    margin-top: 25px;
 }
 </style>
 """
@@ -110,8 +111,8 @@ def create_pdf(teks_analisa, nama_user, usia_user):
         # Bersihkan format markdown (**, ###)
         baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
         
-        # JIKA BARIS ADALAH JUDUL BAGIAN (Mulai dari Salam, I, II, III, dst)
-        if baris_pdf.startswith(('Salam', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.')):
+        # JIKA BARIS ADALAH JUDUL BAGIAN (I, II, III, IV, V, VI, VII)
+        if baris_pdf.startswith(('I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.')):
             pdf.ln(6) # Spasi atas
             pdf.set_font("Arial", 'B', 12)
             pdf.set_text_color(0, 102, 204) # WARNA BIRU ELEGAN UNTUK JUDUL
@@ -186,7 +187,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT AI (DIPERBARUI DENGAN PENGGABUNGAN STYLE NATASHA & SOBAT SEHAT) ---
+        # --- PROMPT AI (DIPERBARUI DENGAN STRUKTUR 7 BAGIAN YANG PRESISI) ---
         prompt_sistem = f"""
         PERAN ANDA:
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
@@ -202,43 +203,47 @@ if tombol:
         INSTRUKSI KHUSUS & FORMAT OUTPUT (IKUTI SECARA KETAT):
         
         ATURAN UMUM:
-        - Tulis kepanjangan istilah teknis (IF, GERD, dll) saat pertama muncul.
-        - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)" (Jangan gunakan kalimat "Pemutusan puasa" saja atau "Berbuka puasa" saja).
-        - Format Judul: Gunakan Markdown (###) di setiap judul utama. DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL (Mulai dari Salam Pembuka hingga Bagian VI) agar PDF dapat dicetak sempurna dan terdeteksi oleh sistem desain kami.
-        - WAJIB gunakan struktur angka Romawi (I sampai VI) persis seperti urutan di bawah ini.
+        - Tulis kepanjangan istilah teknis (IF, TRE, GERD, dll) saat pertama muncul.
+        - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)".
+        - Format Judul: Gunakan Markdown (###) HANYA pada judul utama berangka Romawi (I sampai VII). 
+        - DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL agar PDF dapat dicetak sempurna dan diwarnai oleh sistem.
+        - WAJIB gunakan struktur angka Romawi persis seperti urutan di bawah ini.
         
         STRUKTUR LAPORAN HARUS SEPERTI INI:
         
-        ### Salam Pembuka
-        Gunakan gaya yang empatik dan hangat (Gaya Laporan Natasha): "Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa adalah langkah luar biasa... Mengingat data Anda... Berikut adalah panduan..."
+        (TANPA JUDUL, LANGSUNG TULISKAN SALAM)
+        Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa, atau yang dikenal secara ilmiah sebagai *Intermittent Fasting (IF)*, adalah langkah luar biasa untuk kesehatan metabolisme dan perbaikan sel. Mengingat data dan keluhan Anda, berikut adalah panduan bertahap dan aman yang telah dirancang khusus untuk Anda.
         
-        ### I. Analisa Kondisi Saat Ini
+        ### I. ANALISA KONDISI SAAT INI
         Berikan evaluasi singkat mengenai status BMI, Usia, dan Kondisi Kesehatan user saat ini, serta jawab secara ringkas keluhan utama mereka.
         
-        ### II. Pola Puasa Harian dalam Seminggu (Weekly Daily Routine)
-        Gunakan gaya implementasi fase (Gaya Natasha):
+        ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA ({nama.upper()})
+        Jelaskan bahwa tubuh butuh adaptasi (menghindari kejutan metabolik). Susun menjadi 3 sub-poin berikut (gunakan cetak tebal untuk nama fase):
+        - **FASE PERSIAPAN (1 - 3 hari Sebelum Puasa):** Sarankan audit kebiasaan makan (kurangi gula/karbohidrat sederhana), prioritaskan kualitas tidur, dan optimalkan hidrasi.
+        - **FASE IMPLEMENTASI: Metode TRE 12:12 (1 Minggu Pertama):** Instruksikan untuk puasa 12 jam (misal jam 20.00 hingga 08.00). Fokus pada membiasakan lambung istirahat.
+        - **FASE PENINGKATAN: Metode TRE 14:10 sampai 16:8 (Minggu ke-2 dst):** Jelaskan cara menaikkan jam puasa perlahan setelah tubuh nyaman, agar pembakaran lemak dan autofagi mulai aktif.
+        
+        ### III. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
         - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal TRE 16:8 setiap hari) agar ritme sirkadian stabil.
         - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), TRE 16:8, dan TRE 12:12.
         - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
         
-        ### III. Saran Olahraga & Waktu Pelaksanaan
+        ### IV. SARAN OLAHRAGA & WAKTU PELAKSANAAN
         - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
         - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
         
-        ### IV. Panduan Pemutusan / Buka Puasa (Break the Fast)
-        Gunakan gaya instruksional (Gaya Laporan Natasha): Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
+        ### V. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
+        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
         
-        ### V. Analisa Kelayakan Puasa Panjang & Berkala
-        Ganti gaya penulisan menjadi analitis, tegas, dan medis (Gaya Laporan Sobat Sehat):
-        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi. Gunakan dasar ilmiah (Autofagi Dr. Yoshinori Ohsumi, Regenerasi Sel Punca Dr. Valter Longo).
-        - Jika TIDAK AMAN (BMI < 18.5, lansia, kondisi rentan): Nyatakan dengan Sub-judul TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Jelaskan risiko medisnya (malnutrisi/hilang massa otot). Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
-        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan (16:8 -> 24 -> 36 -> 48 -> 72), Interval (misal 1x sebulan), Timing (saat rileks), Manfaat Ilmiah, dan Peringatan Elektrolit.
+        ### VI. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
+        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
         
-        ### VI. Rekomendasi Nutrisi Pendamping
-        Lakukan screening otomatis di otak Anda:
-        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food).
-        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler stabil, dukungan detoksifikasi, kecukupan protein). 
-        - JIKA AMAN, WAJIB tutup bagian VI ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        ### VII. REKOMENDASI NUTRISI PENDAMPING
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
+        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - JIKA AMAN, WAJIB tutup bagian VII ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
