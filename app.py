@@ -31,6 +31,13 @@ div[class*="viewerBadge"] {display: none !important;}
     padding-top: 2rem !important;
     padding-bottom: 150px !important; 
 }
+
+/* 4. PERCANTIK TAMPILAN HEADER DI WEB */
+h3 {
+    color: #0066cc; /* Warna biru untuk judul di Web */
+    border-bottom: 2px solid #f0f2f6;
+    padding-bottom: 5px;
+}
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
@@ -56,29 +63,19 @@ def cek_password():
 
     # LOGIKA PENGUNCIAN
     if input_pass != st.secrets["PASSWORD_AKSES"]:
-        # Jika salah/kosong
         if input_pass:
             st.error("⛔ Kode Akses Salah!")
         
-        # Pesan Info
         st.info("🔒 Aplikasi ini dikunci khusus untuk Member Premium.")
-        
         st.markdown("""
         **Belum punya Kode Akses?**
         Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
         """)
-        
-        # Tombol Link Pembelian
         st.link_button("🛒 Beli Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
-        
-        # Tambahan Spacer Manual (Jaga-jaga jika CSS gagal di browser tertentu)
         st.write("\n" * 5) 
         st.caption("Klik tombol di atas untuk mendapatkan akses.")
-        
-        # HENTIKAN APLIKASI
         st.stop()
     
-    # JIKA BENAR
     st.success("✅ Akses Diterima! Silakan isi data di bawah.")
     st.divider()
 
@@ -89,31 +86,53 @@ cek_password()
 # AREA DI BAWAH INI HANYA AKAN MUNCUL JIKA PASSWORD BENAR
 # =========================================================================
 
-# --- FUNGSI PEMBUAT PDF ---
+# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN STYLING ELEGAN) ---
 def create_pdf(teks_analisa, nama_user, usia_user):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
     
-    # Header
+    # Header Utama PDF
     pdf.set_font("Arial", 'B', 16)
-    pdf.cell(200, 10, txt="Hasil Analisa Konsultan Hidup Sehat", ln=1, align='C')
+    pdf.set_text_color(34, 139, 34) # Warna Hijau Tua
+    pdf.cell(200, 10, txt="Laporan Analisa Konsultan Hidup Sehat", ln=1, align='C')
     
     # Info User
-    pdf.set_font("Arial", size=10)
-    pdf.cell(200, 10, txt=f"Klien: {nama_user} | Usia: {usia_user} Th", ln=1, align='C')
-    pdf.ln(10)
+    pdf.set_font("Arial", 'I', 11)
+    pdf.set_text_color(100, 100, 100) # Warna Abu-abu
+    pdf.cell(200, 8, txt=f"Klien: {nama_user} | Usia: {usia_user} Th", ln=1, align='C')
+    pdf.line(10, 28, 200, 28) # Garis Pembatas
+    pdf.ln(8)
     
-    # Isi Analisa
-    pdf.set_font("Arial", size=11)
+    # Proses Teks (Parsing Otomatis untuk Judul)
+    teks_bersih = teks_analisa.encode('latin-1', 'ignore').decode('latin-1')
     
-    # Bersihkan karakter emoji
-    teks_bersih = teks_analisa.encode('latin-1', 'replace').decode('latin-1')
-    pdf.multi_cell(0, 6, teks_bersih)
-    
-    # Footer PDF
-    pdf.ln(10)
+    for baris in teks_bersih.split('\n'):
+        # Bersihkan format markdown (**, ###)
+        baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
+        
+        # JIKA BARIS ADALAH JUDUL BAGIAN (Mulai dari Salam, I, II, III, dst)
+        if baris_pdf.startswith(('Salam', 'I.', 'II.', 'III.', 'IV.', 'V.', 'VI.')):
+            pdf.ln(6) # Spasi atas
+            pdf.set_font("Arial", 'B', 12)
+            pdf.set_text_color(0, 102, 204) # WARNA BIRU ELEGAN UNTUK JUDUL
+            pdf.multi_cell(0, 7, baris_pdf)
+            pdf.ln(1) # Spasi bawah
+            pdf.set_text_color(0, 0, 0) # Kembalikan ke teks hitam biasa
+            
+        # JIKA BARIS ADALAH BULLET POINT
+        elif baris_pdf.startswith('-') or baris_pdf.startswith('*'):
+            pdf.set_font("Arial", '', 11)
+            pdf.multi_cell(0, 6, "  " + baris_pdf)
+            
+        # TEKS PARAGRAF BIASA
+        else:
+            pdf.set_font("Arial", '', 11)
+            pdf.multi_cell(0, 6, baris_pdf)
+            
+    # Footer Promosi di PDF
+    pdf.ln(15)
     pdf.set_font("Arial", 'I', 10)
+    pdf.set_text_color(100, 100, 100)
     pdf.cell(0, 10, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=1, align='C')
     
     return pdf.output(dest="S").encode("latin-1")
@@ -167,7 +186,7 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT AI ---
+        # --- PROMPT AI (DIPERBARUI DENGAN PENGGABUNGAN STYLE NATASHA & SOBAT SEHAT) ---
         prompt_sistem = f"""
         PERAN ANDA:
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
@@ -184,37 +203,42 @@ if tombol:
         
         ATURAN UMUM:
         - Tulis kepanjangan istilah teknis (IF, GERD, dll) saat pertama muncul.
-        - WAJIB gunakan istilah "Pemutusan / Buka Puasa" (Jangan gunakan kalimat "Pemutusan puasa" saja atau "Berbuka puasa" saja).
-        - Kurangi penggunaan emoji agar dokumen rapi saat dicetak ke PDF.
-        - WAJIB gunakan struktur angka Romawi (I sampai VI) persis seperti di bawah ini.
+        - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)" (Jangan gunakan kalimat "Pemutusan puasa" saja atau "Berbuka puasa" saja).
+        - Format Judul: Gunakan Markdown (###) di setiap judul utama. DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL (Mulai dari Salam Pembuka hingga Bagian VI) agar PDF dapat dicetak sempurna dan terdeteksi oleh sistem desain kami.
+        - WAJIB gunakan struktur angka Romawi (I sampai VI) persis seperti urutan di bawah ini.
         
         STRUKTUR LAPORAN HARUS SEPERTI INI:
         
-        Salam Pembuka: Berikan salam yang hangat menyapa "{nama}" dan kata pengantar yang empatik serta memotivasi terkait kondisi/pertanyaannya.
+        ### Salam Pembuka
+        Gunakan gaya yang empatik dan hangat (Gaya Laporan Natasha): "Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa adalah langkah luar biasa... Mengingat data Anda... Berikut adalah panduan..."
         
-        I. Analisa Kondisi Saat Ini
+        ### I. Analisa Kondisi Saat Ini
         Berikan evaluasi singkat mengenai status BMI, Usia, dan Kondisi Kesehatan user saat ini, serta jawab secara ringkas keluhan utama mereka.
         
-        II. Pola Puasa Harian dalam Seminggu (Weekly Daily Routine)
-        - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal 16:8 setiap hari) agar ritme sirkadian stabil.
-        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), 16:8, dan 12:12.
-        - Tuliskan rincian jadwal hariannya (Senin sampai Minggu).
+        ### II. Pola Puasa Harian dalam Seminggu (Weekly Daily Routine)
+        Gunakan gaya implementasi fase (Gaya Natasha):
+        - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal TRE 16:8 setiap hari) agar ritme sirkadian stabil.
+        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), TRE 16:8, dan TRE 12:12.
+        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
         
-        III. Saran Olahraga & Waktu Pelaksanaan
+        ### III. Saran Olahraga & Waktu Pelaksanaan
         - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
         - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
         
-        IV. Panduan Pemutusan / Buka Puasa (Break the Fast)
-        Jelaskan urutan yang benar dan aman untuk melakukan "Pemutusan / Buka Puasa" agar gula darah tidak melonjak tajam (Contoh: mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke porsi karbohidrat kompleks).
+        ### IV. Panduan Pemutusan / Buka Puasa (Break the Fast)
+        Gunakan gaya instruksional (Gaya Laporan Natasha): Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
         
-        V. Analisa Kelayakan Puasa Panjang & Berkala
-        - Jika TIDAK AMAN (BMI < 18.5, lansia, kondisi lemah/penyakit kronis berat): Nyatakan TIDAK DIREKOMENDASIKAN untuk 48-72 jam, jelaskan risiko medisnya (malnutrisi/hilang massa otot). Beri alternatif batas aman maksimal (misal OMAD 24 jam) dengan interval 1-2x seminggu.
-        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan (16:8 -> 24 -> 36 -> 48 -> 72), Interval (misal 1x sebulan), Timing (saat rileks), Manfaat (Autofagi, Regenerasi Stem Cell dari Dr. Valter Longo/Yoshinori Ohsumi), dan Peringatan Elektrolit.
+        ### V. Analisa Kelayakan Puasa Panjang & Berkala
+        Ganti gaya penulisan menjadi analitis, tegas, dan medis (Gaya Laporan Sobat Sehat):
+        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi. Gunakan dasar ilmiah (Autofagi Dr. Yoshinori Ohsumi, Regenerasi Sel Punca Dr. Valter Longo).
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, kondisi rentan): Nyatakan dengan Sub-judul TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Jelaskan risiko medisnya (malnutrisi/hilang massa otot). Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan (16:8 -> 24 -> 36 -> 48 -> 72), Interval (misal 1x sebulan), Timing (saat rileks), Manfaat Ilmiah, dan Peringatan Elektrolit.
         
-        VI. Rekomendasi Nutrisi Pendamping
-        Lakukan *screening* otomatis di otak Anda:
-        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas pentingnya asupan alami (Real Food) utuh.
-        - Jika AMAN: Jelaskan kehebatan Spirulina sebagai superfood pengiring puasa. WAJIB tutup bagian ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        ### VI. Rekomendasi Nutrisi Pendamping
+        Lakukan screening otomatis di otak Anda:
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food).
+        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler stabil, dukungan detoksifikasi, kecukupan protein). 
+        - JIKA AMAN, WAJIB tutup bagian VI ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
@@ -268,9 +292,9 @@ if tombol:
             file_pdf = create_pdf(response.text, nama, usia)
             
             st.download_button(
-                label="📄 Download PDF (Klik Disini)",
+                label="📄 Download Laporan PDF (Klik Disini)",
                 data=file_pdf,
-                file_name=f"Panduan_Sehat_{nama}.pdf",
+                file_name=f"Laporan_Medis_{nama}.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
@@ -280,4 +304,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
