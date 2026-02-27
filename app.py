@@ -75,11 +75,9 @@ def cek_password():
         """
         st.markdown(html_logo, unsafe_allow_html=True)
     
-    # Judul Awal
+    # Judul Awal & Subjudul
     st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
-    st.write("Selamat datang di Aplikasi Panduan Puasa Intermiten (Intermittent Fasting)"
-             " sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan"
-             " agar Bisa Mendapatkan Autofagi yang Efektif.")
+    st.markdown("<h4 style='text-align: center; color: #555555; font-weight: normal; margin-bottom: 20px;'>Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif</h4>", unsafe_allow_html=True)
     st.divider()
 
     # Cek Password di Secrets
@@ -368,7 +366,7 @@ if tombol:
             st.download_button(
                 label="📄 Download Laporan PDF (Klik Disini)",
                 data=file_pdf,
-                file_name=f"Laporan_Medis_{nama}.pdf",
+                file_name=f"Panduan_Sehat_{nama}.pdf",
                 mime="application/pdf",
                 use_container_width=True
             )
