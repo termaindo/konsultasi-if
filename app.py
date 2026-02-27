@@ -41,9 +41,7 @@ def cek_password():
     
     # Judul Awal
     st.title("🌱 Konsultan Hidup Sehat")
-    st.write("Selamat datang di Aplikasi Panduan Puasa Intermiten (Intermittent Fasting)"
-             " sesuai Usia, Jenis Kelamin, BMI, dan Riwayat Kesehatan"
-             " agar Mencapai Autofagi yang Efektif.")
+    st.write("Selamat datang di Aplikasi Panduan Puasa & Autofagi.")
     st.divider()
 
     # Cek Password di Secrets
@@ -226,6 +224,20 @@ if tombol:
              Alasan: Meniru pola makan evolusioner leluhur kita, mencegah laju metabolisme basal melambat (menghindari fase plateau), dan menjaga keseimbangan hormon tiroid/leptin.
              
            Format keluaran harus berupa daftar hari yang mudah dibaca (Senin sampai Minggu).
+           
+        6. POLA OLAHRAGA & AKTIVITAS FISIK (EXERCISE ROUTINE):
+           Buat bagian khusus berjudul "Saran Olahraga & Waktu Pelaksanaan".
+           Sesuaikan rekomendasi jenis olahraga dan *timing*-nya secara rasional berdasarkan parameter Usia, BMI, dan Kondisi Kesehatan.
+           
+           - JENIS OLAHRAGA: 
+             Jika Lansia (>60 th) atau Kondisi Rentan: Fokus pada peregangan, mobilitas, jalan santai, dan Latihan Beban Ringan (untuk mencegah sarkopenia / penyusutan otot dan menjaga kepadatan tulang). Hindari olahraga *high-impact*.
+             Jika Dewasa Sehat/Overweight: Kombinasikan Kardio LISS (Low-Intensity Steady State seperti jalan cepat/berenang) untuk membakar lemak, dan Latihan Beban (*Resistance Training*) untuk meningkatkan metabolisme basal.
+             
+           - TIMING (WAKTU PELAKSANAAN TERBAIK):
+             a) Di Jendela Puasa (Fasted State): Sangat disarankan untuk melakukan Olahraga Intensitas Rendah-Sedang (LISS Kardio) di pagi hari atau menjelang waktu berbuka. Jelaskan alasannya: kadar insulin yang rendah membuat tubuh terpaksa menggunakan cadangan lemak sebagai energi utama (*Fat Oxidation* maksimal) dan memicu lonjakan Hormon Pertumbuhan (HGH) untuk melindungi otot.
+             b) Di Jendela Makan (Fed State): Disarankan untuk Latihan Beban Berat (*Heavy Lifting*) atau HIIT (*High-Intensity Interval Training*). Jelaskan alasannya: olahraga intensitas tinggi membutuhkan glikogen otot, yang hanya tersedia cukup setelah kita makan. Asupan protein di jendela makan ini juga akan langsung dipakai untuk memperbaiki dan membesarkan sel otot (*Muscle Protein Synthesis*).
+             
+           - PERINGATAN SAAT PUASA PANJANG: Tegaskan secara mutlak bahwa apabila user sedang menjalankan Puasa Panjang (48-72 Jam), olahraga berat HARUS DIHENTIKAN. Cukup lakukan peregangan ringan, meditasi, atau jalan kaki santai. Olahraga berat saat puasa berkepanjangan dapat memicu pemecahan massa otot (*gluconeogenesis* berlebih) dan lonjakan stres kortisol yang membahayakan.
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
@@ -291,5 +303,3 @@ if tombol:
             
     except Exception as e:
         st.error(f"Terjadi kesalahan: {e}")
-
-
