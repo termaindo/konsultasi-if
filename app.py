@@ -2,6 +2,8 @@ import streamlit as st
 import google.generativeai as genai
 from fpdf import FPDF
 import base64
+import os
+from datetime import datetime
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
@@ -47,8 +49,15 @@ st.markdown(hide_menu_style, unsafe_allow_html=True)
 def cek_password():
     """Fungsi untuk memblokir akses jika password salah"""
     
+    # --- MENAMPILKAN LOGO DI WEB (TENGAH ATAS) ---
+    logo_path = "Logo_Aplikasi_Sehat.png"
+    if os.path.exists(logo_path):
+        col_logo1, col_logo2, col_logo3 = st.columns([1, 1.5, 1])
+        with col_logo2:
+            st.image(logo_path, use_container_width=True)
+    
     # Judul Awal
-    st.title("🌱 Konsultan Hidup Sehat")
+    st.markdown("<h1 style='text-align: center;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
     st.write("Selamat datang di Aplikasi Panduan Puasa Intermiten (Intermittent Fasting)"
              " sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan"
              " agar Bisa Mendapatkan Autofagi yang Efektif.")
@@ -87,37 +96,78 @@ cek_password()
 # AREA DI BAWAH INI HANYA AKAN MUNCUL JIKA PASSWORD BENAR
 # =========================================================================
 
-# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN STYLING ELEGAN) ---
-def create_pdf(teks_analisa, nama_user, usia_user):
+# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN HEADER BOX HITAM PREMIUM) ---
+def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Sehat.png"):
     pdf = FPDF()
     pdf.add_page()
     
-    # Header Utama PDF
+    # --- 1. HEADER BOX HITAM ---
+    pdf.set_fill_color(20, 20, 20)  # Warna Hitam (Almost Black)
+    pdf.rect(0, 0, 210, 25, 'F')    # Lebar A4 = 210mm
+    
+    # Cari lokasi logo
+    if not os.path.exists(logo_path):
+        if os.path.exists("../Logo_Aplikasi_Sehat.png"):
+            logo_path = "../Logo_Aplikasi_Sehat.png"
+
+    # a) LOGO DENGAN LINGKARAN PUTIH & BINGKAI EMAS
+    if os.path.exists(logo_path):
+        # Bingkai Lingkaran Emas Luar
+        pdf.set_fill_color(218, 165, 32) # Goldenrod color
+        pdf.set_draw_color(218, 165, 32)
+        pdf.ellipse(9, 2, 21, 21, 'F')
+        
+        # Latar Lingkaran Putih Dalam
+        pdf.set_fill_color(255, 255, 255) # Putih
+        pdf.ellipse(9.5, 2.5, 20, 20, 'F')
+        
+        # Cetak Gambar Logo di Atas Lingkaran Putih
+        pdf.image(logo_path, x=10.5, y=3.5, w=18, h=18)
+    
+    # b) NAMA APLIKASI (Teks Putih) - Emoji dilepas agar fpdf tidak error
+    pdf.set_text_color(255, 255, 255)
     pdf.set_font("Arial", 'B', 16)
-    pdf.set_text_color(34, 139, 34) # Warna Hijau Tua
-    pdf.cell(200, 10, txt="Laporan Analisa Konsultan Hidup Sehat", ln=1, align='C')
+    pdf.set_xy(35, 8) 
+    pdf.cell(0, 10, "Konsultan Hidup Sehat", ln=True)
     
-    # Info User
-    pdf.set_font("Arial", 'I', 11)
-    pdf.set_text_color(100, 100, 100) # Warna Abu-abu
-    pdf.cell(200, 8, txt=f"Klien: {nama_user} | Usia: {usia_user} Th", ln=1, align='C')
-    pdf.line(10, 28, 200, 28) # Garis Pembatas
-    pdf.ln(8)
+    # Reset posisi Y ke bawah kotak hitam
+    pdf.set_y(28)
     
-    # Proses Teks (Parsing Otomatis untuk Judul)
+    # --- 2. HYPERLINK SUMBER ---
+    pdf.set_font("Arial", 'I', 10)
+    pdf.set_text_color(0, 0, 255)  # Warna Biru
+    pdf.cell(0, 5, "Sumber: https://aplikasisehat.streamlit.app", ln=True, align='C', link="https://aplikasisehat.streamlit.app")
+    pdf.ln(2)
+    
+    # --- 3. NAMA KLIEN (CENTER) ---
+    pdf.set_text_color(0, 0, 0) # Kembali ke Hitam
+    pdf.set_font("Arial", 'B', 16)
+    aman_nama = nama_user.encode('latin-1', 'replace').decode('latin-1')
+    pdf.cell(0, 8, f"Klien: {aman_nama} | Usia: {usia_user} Th", ln=True, align='C')
+    
+    # --- 4. INFO TANGGAL ANALISA ---
+    pdf.set_font("Arial", 'B', 10)
+    waktu_analisa = datetime.now().strftime("%d-%m-%Y %H:%M")
+    pdf.cell(0, 5, f"Waktu Cetak: {waktu_analisa}", ln=True, align='R')
+    
+    # Garis Bawah Header
+    pdf.set_line_width(0.5)
+    pdf.line(10, pdf.get_y()+2, 200, pdf.get_y()+2)
+    pdf.ln(5)
+    
+    # --- 5. BODY LAPORAN (PARSING OTOMATIS) ---
     teks_bersih = teks_analisa.encode('latin-1', 'ignore').decode('latin-1')
     
     for baris in teks_bersih.split('\n'):
-        # Bersihkan format markdown (**, ###)
         baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
         
         # JIKA BARIS ADALAH JUDUL BAGIAN (I, II, III, IV, V, VI, VII)
         if baris_pdf.startswith(('I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.')):
-            pdf.ln(6) # Spasi atas
+            pdf.ln(6)
             pdf.set_font("Arial", 'B', 12)
-            pdf.set_text_color(0, 102, 204) # WARNA BIRU ELEGAN UNTUK JUDUL
+            pdf.set_text_color(0, 102, 204) # WARNA BIRU ELEGAN
             pdf.multi_cell(0, 7, baris_pdf)
-            pdf.ln(1) # Spasi bawah
+            pdf.ln(1)
             pdf.set_text_color(0, 0, 0) # Kembalikan ke teks hitam biasa
             
         # JIKA BARIS ADALAH BULLET POINT
