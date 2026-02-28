@@ -75,7 +75,7 @@ def cek_password():
         """
         st.markdown(html_logo, unsafe_allow_html=True)
     
-    # Judul Awal & Subjudul (Diperbarui dengan font lebih kecil dan warna putih kontras)
+    # Judul Awal & Subjudul 
     st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
     st.markdown("<h5 style='text-align: center; color: #FFFFFF; font-weight: normal; font-size: 15px; margin-bottom: 20px; line-height: 1.4;'>Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif</h5>", unsafe_allow_html=True)
     st.divider()
@@ -129,16 +129,13 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
 
     # a) LOGO DENGAN LINGKARAN PUTIH & BINGKAI EMAS
     if os.path.exists(logo_path):
-        # Bingkai Lingkaran Emas Luar (Posisi Y disesuaikan agar di tengah box)
         pdf.set_fill_color(218, 165, 32) # Goldenrod color
         pdf.set_draw_color(218, 165, 32)
         pdf.ellipse(9, 5, 22, 22, 'F')
         
-        # Latar Lingkaran Putih Dalam
         pdf.set_fill_color(255, 255, 255) # Putih
         pdf.ellipse(9.5, 5.5, 21, 21, 'F')
         
-        # Cetak Gambar Logo di Atas Lingkaran Putih
         pdf.image(logo_path, x=10.5, y=6.5, w=19, h=19)
     
     # b) NAMA APLIKASI (Teks Putih)
@@ -147,35 +144,33 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
     pdf.set_xy(35, 6) 
     pdf.cell(0, 8, "Konsultan Hidup Sehat", ln=True)
 
-    # c) SUBJUDUL APLIKASI (Warna abu keputihan, font lebih kecil)
+    # c) SUBJUDUL APLIKASI
     pdf.set_font("Arial", '', 9)
     pdf.set_text_color(220, 220, 220)
     pdf.set_xy(35, 14)
     subjudul = "Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif"
     pdf.multi_cell(165, 5, subjudul)
     
-    # Reset posisi Y ke bawah kotak hitam
     pdf.set_y(35)
     
     # --- 2. HYPERLINK SUMBER ---
     pdf.set_font("Arial", 'I', 10)
-    pdf.set_text_color(0, 0, 255)  # Warna Biru
+    pdf.set_text_color(0, 0, 255)  
     pdf.cell(0, 5, "Sumber: https://aplikasisehat.streamlit.app", ln=True, align='C', link="https://aplikasisehat.streamlit.app")
     pdf.ln(2)
     
     # --- 3. NAMA KLIEN (CENTER) ---
-    pdf.set_text_color(0, 0, 0) # Kembali ke Hitam
+    pdf.set_text_color(0, 0, 0) 
     pdf.set_font("Arial", 'B', 16)
     aman_nama = nama_user.encode('latin-1', 'replace').decode('latin-1')
     pdf.cell(0, 8, f"Klien: {aman_nama} | Usia: {usia_user} Th", ln=True, align='C')
     
-    # --- 4. INFO TANGGAL ANALISA (DIPERBARUI KE WIB) ---
+    # --- 4. INFO TANGGAL ANALISA (WIB) ---
     pdf.set_font("Arial", 'B', 10)
-    tz_wib = timezone(timedelta(hours=7)) # Mengatur zona waktu ke UTC+7 (WIB)
+    tz_wib = timezone(timedelta(hours=7)) 
     waktu_analisa = datetime.now(tz_wib).strftime("%d-%m-%Y %H:%M WIB")
     pdf.cell(0, 5, f"Waktu Cetak: {waktu_analisa}", ln=True, align='R')
     
-    # Garis Bawah Header
     pdf.set_line_width(0.5)
     pdf.line(10, pdf.get_y()+2, 200, pdf.get_y()+2)
     pdf.ln(5)
@@ -186,21 +181,18 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
     for baris in teks_bersih.split('\n'):
         baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
         
-        # JIKA BARIS ADALAH JUDUL BAGIAN (I, II, III, IV, V, VI, VII)
         if baris_pdf.startswith(('I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.')):
             pdf.ln(6)
             pdf.set_font("Arial", 'B', 12)
-            pdf.set_text_color(0, 102, 204) # WARNA BIRU ELEGAN
+            pdf.set_text_color(0, 102, 204) 
             pdf.multi_cell(0, 7, baris_pdf)
             pdf.ln(1)
-            pdf.set_text_color(0, 0, 0) # Kembalikan ke teks hitam biasa
+            pdf.set_text_color(0, 0, 0) 
             
-        # JIKA BARIS ADALAH BULLET POINT
         elif baris_pdf.startswith('-') or baris_pdf.startswith('*'):
             pdf.set_font("Arial", '', 11)
             pdf.multi_cell(0, 6, "  " + baris_pdf)
             
-        # TEKS PARAGRAF BIASA
         else:
             pdf.set_font("Arial", '', 11)
             pdf.multi_cell(0, 6, baris_pdf)
@@ -210,7 +202,7 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
     pdf.set_font("Arial", 'I', 10)
     pdf.set_text_color(100, 100, 100)
     pdf.cell(0, 5, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=True, align='C')
-    pdf.set_text_color(0, 0, 255) # Warna biru untuk link
+    pdf.set_text_color(0, 0, 255) 
     pdf.cell(0, 5, "https://lynk.id/hahastoresby", ln=True, align='C', link="https://lynk.id/hahastoresby")
     
     return pdf.output(dest="S").encode("latin-1")
@@ -222,31 +214,45 @@ else:
     st.error("⚠️ API Key belum dipasang. Cek Secrets.")
     st.stop()
 
-# --- 4. Formulir Utama ---
-with st.form("form_konsultasi"):
-    
-    st.markdown("### 📝 Data Diri")
-    
-    st.subheader("1️⃣ Data Fisik")
-    nama = st.text_input("Nama Panggilan", "Sobat Sehat")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        usia = st.number_input("Usia (Tahun)", 15, 100, 41)
-        berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
-    with col2:
-        gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
-        tinggi = st.number_input("Tinggi (cm)", 100.0, 250.0, 170.0)
+# --- 4. Formulir Utama (Dikeluarkan dari st.form agar dinamis) ---
+st.markdown("### 📝 Data Diri")
 
-    bmi = berat / ((tinggi/100)**2)
+st.subheader("1️⃣ Data Fisik")
+nama = st.text_input("Nama Panggilan", "Sobat Sehat")
 
-    st.subheader("2️⃣ Riwayat Kesehatan")
-    kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
+col1, col2 = st.columns(2)
+with col1:
+    usia = st.number_input("Usia (Tahun)", 15, 100, 41)
+    berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
+with col2:
+    gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
+    tinggi = st.number_input("Tinggi (cm)", 100.0, 250.0, 170.0)
 
-    st.subheader("3️⃣ Pertanyaan Anda")
-    pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
+bmi = berat / ((tinggi/100)**2)
 
-    tombol = st.form_submit_button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
+# FITUR FILTERING BARU
+st.subheader("2️⃣ Pengalaman Puasa")
+pengalaman_puasa = st.radio(
+    "Apakah Anda sudah biasa berpuasa intermiten?",
+    ["Iya", "Baru akan mencoba", "Sudah pernah tapi sudah berhenti"]
+)
+
+lama_berhenti = ""
+if pengalaman_puasa == "Sudah pernah tapi sudah berhenti":
+    lama_berhenti = st.text_input("Sudah berhenti berapa lama? (dalam bulan)")
+
+butuh_panduan_pemula = st.radio(
+    "Apakah Anda memerlukan Panduan Aman untuk Mulai Berpuasa bagi Pemula?",
+    ["Iya", "Tidak"]
+)
+
+st.subheader("3️⃣ Riwayat Kesehatan")
+kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
+
+st.subheader("4️⃣ Pertanyaan Anda")
+pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
+
+tombol = st.button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
 
 # --- 5. Logika AI & Hasil ---
 if tombol:
@@ -264,7 +270,10 @@ if tombol:
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel('models/gemini-flash-latest')
         
-        # --- PROMPT AI (DIPERBARUI DENGAN STRUKTUR 7 BAGIAN YANG PRESISI) ---
+        # Format keterangan berhenti agar rapi di prompt
+        teks_berhenti = f" (Telah berhenti selama {lama_berhenti} bulan)" if lama_berhenti else ""
+        
+        # --- PROMPT AI STRUKTUR DINAMIS ---
         prompt_sistem = f"""
         PERAN ANDA:
         Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
@@ -274,6 +283,8 @@ if tombol:
         Usia: {usia}
         Gender: {gender}
         BMI: {bmi:.2f}
+        Pengalaman Puasa: {pengalaman_puasa}{teks_berhenti}
+        Butuh Panduan Pemula: {butuh_panduan_pemula}
         Kondisi: {kondisi}
         Pertanyaan: "{pertanyaan}"
         
@@ -282,7 +293,7 @@ if tombol:
         ATURAN UMUM:
         - Tulis kepanjangan istilah teknis (IF, TRE, GERD, dll) saat pertama muncul.
         - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)".
-        - Format Judul: Gunakan Markdown (###) HANYA pada judul utama berangka Romawi (I sampai VII). 
+        - Format Judul: Gunakan Markdown (###) HANYA pada judul utama berangka Romawi. 
         - DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL agar PDF dapat dicetak sempurna dan diwarnai oleh sistem.
         - WAJIB gunakan struktur angka Romawi persis seperti urutan di bawah ini.
         
@@ -292,8 +303,12 @@ if tombol:
         Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa, atau yang dikenal secara ilmiah sebagai *Intermittent Fasting (IF)*, adalah langkah luar biasa untuk kesehatan metabolisme dan perbaikan sel. Mengingat data dan keluhan Anda, berikut adalah panduan bertahap dan aman yang telah dirancang khusus untuk Anda.
         
         ### I. ANALISA KONDISI SAAT INI
-        Berikan evaluasi singkat mengenai status BMI, Usia, dan Kondisi Kesehatan user saat ini, serta jawab secara ringkas keluhan utama mereka.
-        
+        Berikan evaluasi singkat mengenai status BMI, Usia, Kondisi Kesehatan user saat ini, riwayat pengalaman puasa mereka, serta jawab secara ringkas keluhan utama mereka.
+        """
+
+        # LOGIKA PERCABANGAN PROMPT (Apakah butuh panduan pemula atau tidak)
+        if butuh_panduan_pemula == "Iya":
+            prompt_sistem += f"""
         ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA ({nama.upper()})
         Jelaskan bahwa tubuh butuh adaptasi (menghindari kejutan metabolik). Susun menjadi 3 sub-poin berikut (gunakan cetak tebal untuk nama fase):
         - **FASE PERSIAPAN (1 - 3 hari Sebelum Puasa):** Sarankan audit kebiasaan makan (kurangi gula/karbohidrat sederhana), prioritaskan kualitas tidur, dan optimalkan hidrasi.
@@ -320,7 +335,31 @@ if tombol:
         ### VII. REKOMENDASI NUTRISI PENDAMPING
         - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
         - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
-        - JIKA AMAN, WAJIB tutup bagian VII ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        """
+        else:
+            prompt_sistem += f"""
+        ### II. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
+        - Karena klien bukan pemula/tidak butuh panduan pemula, langsung berikan panduan pola puasa lanjutan yang sesuai dengan kondisi dan riwayat pengalaman puasa mereka.
+        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi puasa panjang, OMAD (24 jam), TRE 16:8, dll.
+        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
+        
+        ### III. SARAN OLAHRAGA & WAKTU PELAKSANAAN
+        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
+        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
+        
+        ### IV. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
+        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
+        
+        ### V. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
+        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
+        
+        ### VI. REKOMENDASI NUTRISI PENDAMPING
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
+        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         
         with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
@@ -364,7 +403,6 @@ if tombol:
                 Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
                 """)
             with col_btn:
-                # Tautan diperbarui mengarah ke Lynk.id
                 link_ebook = "https://lynk.id/hahastoresby"
                 st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
 
