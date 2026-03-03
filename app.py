@@ -178,3 +178,255 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
     
     pdf.set_line_width(0.5)
     pdf.line(10, pdf.get_y()+2, 200, pdf.get_y()+2)
+    pdf.ln(5)
+    
+    # --- 5. BODY LAPORAN (PARSING OTOMATIS) ---
+    teks_bersih = teks_analisa.encode('latin-1', 'ignore').decode('latin-1')
+    
+    for baris in teks_bersih.split('\n'):
+        baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
+        
+        if baris_pdf.startswith(('I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.')):
+            pdf.ln(6)
+            pdf.set_font("Arial", 'B', 12)
+            pdf.set_text_color(0, 102, 204) 
+            pdf.multi_cell(0, 7, baris_pdf)
+            pdf.ln(1)
+            pdf.set_text_color(0, 0, 0) 
+            
+        elif baris_pdf.startswith('-') or baris_pdf.startswith('*'):
+            pdf.set_font("Arial", '', 11)
+            pdf.multi_cell(0, 6, "  " + baris_pdf)
+            
+        else:
+            pdf.set_font("Arial", '', 11)
+            pdf.multi_cell(0, 6, baris_pdf)
+            
+    # Footer Promosi di PDF (Diperbarui dengan Hyperlink Toko)
+    pdf.ln(15)
+    pdf.set_font("Arial", 'I', 10)
+    pdf.set_text_color(100, 100, 100)
+    pdf.cell(0, 5, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=True, align='C')
+    pdf.set_text_color(0, 0, 255) 
+    pdf.cell(0, 5, "https://lynk.id/hahastoresby", ln=True, align='C', link="https://lynk.id/hahastoresby")
+    
+    return pdf.output(dest="S").encode("latin-1")
+
+# --- 3. Cek API Key ---
+if "GOOGLE_API_KEY" in st.secrets:
+    api_key = st.secrets["GOOGLE_API_KEY"]
+else:
+    st.error("⚠️ API Key belum dipasang. Cek Secrets.")
+    st.stop()
+
+# --- 4. Formulir Utama (Dikeluarkan dari st.form agar dinamis) ---
+st.markdown("### 📝 Data Diri")
+
+st.subheader("1️⃣ Data Fisik")
+nama = st.text_input("Nama Panggilan", "Sobat Sehat")
+
+col1, col2 = st.columns(2)
+with col1:
+    usia = st.number_input("Usia (Tahun)", 15, 100, 41)
+    berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
+with col2:
+    gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
+    tinggi = st.number_input("Tinggi (cm)", 100.0, 250.0, 170.0)
+
+bmi = berat / ((tinggi/100)**2)
+
+# FITUR FILTERING BARU
+st.subheader("2️⃣ Pengalaman Puasa")
+pengalaman_puasa = st.radio(
+    "Apakah Anda sudah biasa berpuasa intermiten?",
+    ["Iya", "Baru akan mencoba", "Sudah pernah tapi sudah berhenti"]
+)
+
+lama_berhenti = ""
+if pengalaman_puasa == "Sudah pernah tapi sudah berhenti":
+    lama_berhenti = st.text_input("Sudah berhenti berapa lama? (dalam bulan)")
+
+butuh_panduan_pemula = st.radio(
+    "Apakah Anda memerlukan Panduan Aman untuk Mulai Berpuasa bagi Pemula?",
+    ["Iya", "Tidak"]
+)
+
+st.subheader("3️⃣ Riwayat Kesehatan")
+kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
+
+st.subheader("4️⃣ Pertanyaan Anda")
+pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
+
+tombol = st.button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
+
+# --- 5. Logika AI & Hasil ---
+if tombol:
+    st.divider()
+    if bmi < 18.5:
+        st.warning(f"⚠️ BMI: {bmi:.2f} (Underweight)")
+    elif 18.5 <= bmi < 25:
+        st.success(f"✅ BMI: {bmi:.2f} (Normal)")
+    elif 25 <= bmi < 30:
+        st.warning(f"⚠️ BMI: {bmi:.2f} (Overweight)")
+    else:
+        st.error(f"🚨 BMI: {bmi:.2f} (Obesity)")
+        
+    try:
+        genai.configure(api_key=api_key)
+        model = genai.GenerativeModel('models/gemini-flash-latest')
+        
+        # Format keterangan berhenti agar rapi di prompt
+        teks_berhenti = f" (Telah berhenti selama {lama_berhenti} bulan)" if lama_berhenti else ""
+        
+        # --- PROMPT AI STRUKTUR DINAMIS ---
+        prompt_sistem = f"""
+        PERAN ANDA:
+        Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
+        
+        DATA USER:
+        Nama: {nama}
+        Usia: {usia}
+        Gender: {gender}
+        BMI: {bmi:.2f}
+        Pengalaman Puasa: {pengalaman_puasa}{teks_berhenti}
+        Butuh Panduan Pemula: {butuh_panduan_pemula}
+        Kondisi: {kondisi}
+        Pertanyaan: "{pertanyaan}"
+        
+        INSTRUKSI KHUSUS & FORMAT OUTPUT (IKUTI SECARA KETAT):
+        
+        ATURAN UMUM:
+        - Tulis kepanjangan istilah teknis (IF, TRE, GERD, dll) saat pertama muncul.
+        - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)".
+        - Format Judul: Gunakan Markdown (###) HANYA pada judul utama berangka Romawi. 
+        - DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL agar PDF dapat dicetak sempurna dan diwarnai oleh sistem.
+        - WAJIB gunakan struktur angka Romawi persis seperti urutan di bawah ini.
+        
+        STRUKTUR LAPORAN HARUS SEPERTI INI:
+        
+        (TANPA JUDUL, LANGSUNG TULISKAN SALAM)
+        Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa, atau yang dikenal secara ilmiah sebagai *Intermittent Fasting (IF)*, adalah langkah luar biasa untuk kesehatan metabolisme dan perbaikan sel. Mengingat data dan keluhan Anda, berikut adalah panduan bertahap dan aman yang telah dirancang khusus untuk Anda.
+        
+        ### I. ANALISA KONDISI SAAT INI
+        Berikan evaluasi singkat mengenai status BMI, Usia, Kondisi Kesehatan user saat ini, riwayat pengalaman puasa mereka, serta jawab secara ringkas keluhan utama mereka.
+        """
+
+        # LOGIKA PERCABANGAN PROMPT (Apakah butuh panduan pemula atau tidak)
+        if butuh_panduan_pemula == "Iya":
+            prompt_sistem += f"""
+        ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA ({nama.upper()})
+        Jelaskan bahwa tubuh butuh adaptasi (menghindari kejutan metabolik). Susun menjadi 3 sub-poin berikut (gunakan cetak tebal untuk nama fase):
+        - **FASE PERSIAPAN (1 - 3 hari Sebelum Puasa):** Sarankan audit kebiasaan makan (kurangi gula/karbohidrat sederhana), prioritaskan kualitas tidur, dan optimalkan hidrasi.
+        - **FASE IMPLEMENTASI: Metode TRE 12:12 (1 Minggu Pertama):** Instruksikan untuk puasa 12 jam (misal jam 20.00 hingga 08.00). Fokus pada membiasakan lambung istirahat.
+        - **FASE PENINGKATAN: Metode TRE 14:10 sampai 16:8 (Minggu ke-2 dst):** Jelaskan cara menaikkan jam puasa perlahan setelah tubuh nyaman, agar pembakaran lemak dan autofagi mulai aktif.
+        
+        ### III. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
+        - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal TRE 16:8 setiap hari) agar ritme sirkadian stabil.
+        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), TRE 16:8, dan TRE 12:12.
+        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
+        
+        ### IV. SARAN OLAHRAGA & WAKTU PELAKSANAAN
+        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
+        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
+        
+        ### V. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
+        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
+        
+        ### VI. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
+        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
+        
+        ### VII. REKOMENDASI NUTRISI PENDAMPING
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
+        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        """
+        else:
+            prompt_sistem += f"""
+        ### II. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
+        - Karena klien bukan pemula/tidak butuh panduan pemula, langsung berikan panduan pola puasa lanjutan yang sesuai dengan kondisi dan riwayat pengalaman puasa mereka.
+        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi puasa panjang, OMAD (24 jam), TRE 16:8, dll.
+        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
+        
+        ### III. SARAN OLAHRAGA & WAKTU PELAKSANAAN
+        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
+        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
+        
+        ### IV. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
+        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
+        
+        ### V. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
+        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
+        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
+        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
+        
+        ### VI. REKOMENDASI NUTRISI PENDAMPING
+        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
+        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
+        """
+        
+        with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
+            response = model.generate_content(prompt_sistem)
+            
+            st.markdown("### 💡 Laporan & Analisa Personal")
+            st.markdown(response.text)
+            st.divider()
+            
+            # --- LOGIKA PYTHON SPIRULINA ---
+            kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
+            is_spirulina_aman = True
+            
+            for kata in kata_bahaya:
+                if kata in kondisi.lower():
+                    is_spirulina_aman = False
+                    break
+            
+            if is_spirulina_aman:
+                st.info("🌿 **NUTRISI PENDAMPING (SUPERFOOD)**")
+                col_sp1, col_sp2 = st.columns([3, 1])
+                with col_sp1:
+                    st.markdown("""
+                    Berdasarkan profil Anda, **Spirulina** disarankan untuk:
+                    * Memenuhi kebutuhan mikronutrisi saat jendela makan.
+                    * Meningkatkan energi & detoksifikasi seluler alami.
+
+                    Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
+                    """)
+                with col_sp2:
+                    link_spirulina = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
+                    st.link_button("🛒 Order Spirulina", link_spirulina, use_container_width=True)
+                st.divider()
+            
+            # --- BAGIAN EBOOK ---
+            st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
+            col_promo, col_btn = st.columns([2, 1])
+            with col_promo:
+                st.markdown("""
+                Pahami sains **Autofagi & Penyembuhan Sel** secara utuh.
+                Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
+                """)
+            with col_btn:
+                link_ebook = "https://lynk.id/hahastoresby"
+                st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
+
+            st.divider()
+
+            # --- DOWNLOAD PDF ---
+            st.write("📥 **Simpan Panduan Ini:**")
+            file_pdf = create_pdf(response.text, nama, usia)
+            
+            st.download_button(
+                label="📄 Download Laporan PDF (Klik Disini)",
+                data=file_pdf,
+                file_name=f"Panduan_Sehat_{nama}.pdf",
+                mime="application/pdf",
+                use_container_width=True
+            )
+            
+            # PADDING BAWAH (UNTUK HALAMAN HASIL)
+            st.write("\n" * 5)
+            
+    except Exception as e:
+        st.error(f"Terjadi kesalahan: {e}")
