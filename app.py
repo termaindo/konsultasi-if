@@ -202,7 +202,7 @@ def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Seha
             pdf.set_font("Arial", '', 11)
             pdf.multi_cell(0, 6, baris_pdf)
             
-    # Footer Promosi di PDF (Diperbarui dengan Hyperlink Toko)
+    # Footer Promosi di PDF
     pdf.ln(15)
     pdf.set_font("Arial", 'I', 10)
     pdf.set_text_color(100, 100, 100)
@@ -219,7 +219,7 @@ else:
     st.error("⚠️ API Key belum dipasang. Cek Secrets.")
     st.stop()
 
-# --- 4. Formulir Utama (Dikeluarkan dari st.form agar dinamis) ---
+# --- 4. Formulir Utama ---
 st.markdown("### 📝 Data Diri")
 
 st.subheader("1️⃣ Data Fisik")
@@ -338,8 +338,9 @@ if tombol:
         - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
         
         ### VII. REKOMENDASI NUTRISI PENDAMPING
-        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
-        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - PERTAMA: Sebagai ahli krononutrisi, berikan rekomendasi nutrisi dasar (Real Food) yang paling sesuai dengan hasil analisa kondisi kesehatan dan keluhan klien.
+        - KEDUA: Evaluasi kelayakan Spirulina. Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina" sama sekali.
+        - Jika AMAN: Setelah menjelaskan nutrisi dasar, sisipkan penjelasan mengenai kehebatan Spirulina (Energi seluler, detoksifikasi) sebagai suplemen pendamping yang ideal. 
         - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         else:
@@ -362,8 +363,9 @@ if tombol:
         - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
         
         ### VI. REKOMENDASI NUTRISI PENDAMPING
-        - Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina". Bahas asupan alami (Real Food) utuh.
-        - Jika AMAN: Jelaskan kehebatan Spirulina (Energi seluler, detoksifikasi). 
+        - PERTAMA: Sebagai ahli krononutrisi, berikan rekomendasi nutrisi dasar (Real Food) yang paling sesuai dengan hasil analisa kondisi kesehatan dan keluhan klien.
+        - KEDUA: Evaluasi kelayakan Spirulina. Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina" sama sekali.
+        - Jika AMAN: Setelah menjelaskan nutrisi dasar, sisipkan penjelasan mengenai kehebatan Spirulina (Energi seluler, detoksifikasi) sebagai suplemen pendamping yang ideal. 
         - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
         """
         
