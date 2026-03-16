@@ -147,7 +147,7 @@ def render_halaman(model):
                 st.markdown(response.text)
                 
                 st.divider()
-                st.success("👇 **Langkah Selanjutnya:** Silakan ganti pilihan menu di atas ke **3️⃣ Modul Nutrisi & Superfood** untuk melihat rekomendasi makanan Anda.")
+                st.success("☝️ **Langkah Selanjutnya:** Silakan ganti pilihan menu di atas ke **3️⃣ Modul Nutrisi & Superfood** untuk melihat rekomendasi makanan Anda.")
                 
                 # --- BAGIAN EBOOK ---
                 st.info("📘 **PANDUAN LENGKAP TERSEDIA**")
