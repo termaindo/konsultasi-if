@@ -6,8 +6,8 @@ import os
 
 # Memanggil modul-modul eksternal
 from modules import puasa
-# from modules import nutrisi   # Buka hashtag ini nanti jika modul nutrisi sudah siap
-# from modules import olga      # Buka hashtag ini nanti jika modul olga sudah siap
+from modules import nutrisi   
+from modules import olga
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(page_title="Konsultan Hidup Sehat", page_icon="🌱", layout="centered", initial_sidebar_state="collapsed")
