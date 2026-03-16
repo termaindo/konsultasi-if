@@ -206,7 +206,7 @@ if menu_app == "1️⃣ Profil & Panduan Puasa (IF)":
                 st.markdown("### 💡 Laporan Pola Puasa")
                 st.markdown(response.text)
                 
-                st.success("👇 **Langkah Selanjutnya:** Gulir ke atas, pada kotak **Menu Utama**, ganti pilihan ke **Modul Nutrisi & Superfood** untuk melihat menu makan Anda.")
+                st.success("☝️ **Langkah Selanjutnya:** Gulir ke atas, pada kotak **Menu Utama**, ganti pilihan ke **Modul Nutrisi & Superfood** untuk melihat menu makan Anda.")
         except Exception as e:
             st.error(f"Terjadi kesalahan: {e}")
 
