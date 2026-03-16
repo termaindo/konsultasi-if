@@ -145,9 +145,7 @@ elif menu_app == "2️⃣ Panduan Puasa (IF) & Autofagi":
     puasa.render_halaman(model)
 
 elif menu_app == "3️⃣ Modul Nutrisi & Superfood":
-    st.info("Modul Nutrisi akan terhubung ke modules/nutrisi.py")
-    # nutrisi.render_halaman(model, parse_ai_json) # Buka hashtag ini nanti
+    nutrisi.render_halaman(model, parse_ai_json)
 
 elif menu_app == "4️⃣ Modul Olahraga":
-    st.info("Modul Olahraga akan terhubung ke modules/olga.py")
-    # olga.render_halaman(model, parse_ai_json) # Buka hashtag ini nanti
+    olga.render_halaman(model, parse_ai_json)
