@@ -3,16 +3,18 @@ import google.generativeai as genai
 from fpdf import FPDF
 import base64
 import os
+import json
 from datetime import datetime, timedelta, timezone
 
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(
     page_title="Konsultan Hidup Sehat",
     page_icon="🌱",
-    layout="centered"
+    layout="centered",
+    initial_sidebar_state="collapsed" # Memastikan sidebar tertutup dari awal
 )
 
-# --- SCRIPT PENGHILANG MENU & PEMBERI JARAK AMAN (CSS) ---
+# --- SCRIPT PENGHILANG MENU, SIDEBAR, & CSS ---
 hide_menu_style = """
 <style>
 /* 1. Sembunyikan Header & Menu Utama */
@@ -20,23 +22,26 @@ hide_menu_style = """
 header {visibility: hidden;}
 footer {visibility: hidden;}
 
-/* 2. Sembunyikan Tombol Floating (Target Berbagai Versi) */
+/* 2. MATIKAN SIDEBAR SECARA TOTAL UNTUK HP */
+[data-testid="collapsedControl"] {display: none !important;}
+[data-testid="stSidebar"] {display: none !important;}
+section[data-testid="stSidebar"] {display: none !important;}
+
+/* 3. Sembunyikan Tombol Floating */
 [data-testid="stToolbar"] {display: none !important;}
 [data-testid="stDecoration"] {display: none !important;}
 [data-testid="stStatusWidget"] {display: none !important;}
 div[class*="viewerBadge"] {display: none !important;}
-.viewerBadge_container__1QSob {display: none !important;}
 
-/* 3. MANUVER JARAK AMAN (PADDING BAWAH) */
-/* Memberi ruang kosong 150px di bawah agar tombol Beli tidak tertutup */
+/* 4. MANUVER JARAK AMAN (PADDING BAWAH) */
 .block-container {
     padding-top: 2rem !important;
     padding-bottom: 150px !important; 
 }
 
-/* 4. PERCANTIK TAMPILAN HEADER DI WEB */
+/* 5. PERCANTIK TAMPILAN HEADER DI WEB */
 h3 {
-    color: #0066cc; /* Warna biru untuk judul di Web */
+    color: #0066cc;
     border-bottom: 2px solid #f0f2f6;
     padding-bottom: 5px;
     margin-top: 25px;
@@ -45,390 +50,264 @@ h3 {
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
 
+# --- FUNGSI PARSING JSON AI ---
+def parse_ai_json(teks_respon):
+    try:
+        clean_json = teks_respon.strip().replace('```json', '').replace('```', '')
+        return json.loads(clean_json)
+    except Exception as e:
+        return None
+
 # --- 2. FUNGSI GATEKEEPER (GERBANG TOL) ---
 def cek_password():
-    """Fungsi untuk memblokir akses jika password salah"""
-    
-    # --- MENAMPILKAN LOGO DI WEB (LINGKARAN PUTIH & BINGKAI EMAS) ---
     logo_path = "Logo_Aplikasi_Sehat.png"
     if os.path.exists(logo_path):
-        # Membaca gambar menjadi Base64 agar bisa diatur presisi dengan HTML/CSS
         with open(logo_path, "rb") as image_file:
             encoded_string = base64.b64encode(image_file.read()).decode()
             
         html_logo = f"""
         <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-            <div style="
-                background-color: white; 
-                border: 4px solid #DAA520; /* Warna Emas */
-                border-radius: 50%; /* Membuatnya bulat sempurna */
-                width: 130px; 
-                height: 130px; 
-                display: flex; 
-                justify-content: center; 
-                align-items: center; 
-                box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); /* Efek bayangan elegan */
-                overflow: hidden;">
+            <div style="background-color: white; border: 4px solid #DAA520; border-radius: 50%; width: 130px; height: 130px; display: flex; justify-content: center; align-items: center; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5); overflow: hidden;">
                 <img src="data:image/png;base64,{encoded_string}" style="width: 75%; height: auto;">
             </div>
         </div>
         """
         st.markdown(html_logo, unsafe_allow_html=True)
     
-    # Judul Awal & Subjudul 
     st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
-    st.markdown("<h5 style='text-align: center; color: #FFFFFF; font-weight: normal; font-size: 15px; margin-bottom: 20px; line-height: 1.4;'>Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif</h5>", unsafe_allow_html=True)
+    st.markdown("<h5 style='text-align: center; color: #FFFFFF; font-weight: normal; font-size: 15px; margin-bottom: 20px; line-height: 1.4;'>Panduan Puasa Intermiten sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan</h5>", unsafe_allow_html=True)
     st.divider()
 
-    # Cek Password di Secrets
     if "PASSWORD_AKSES" not in st.secrets:
         st.error("⚠️ Konfigurasi Server Belum Lengkap (Password Belum Disetting).")
         st.stop()
 
-    # Kotak Input Password & Tombol Buka Akses
     input_pass = st.text_input("🔑 Masukkan Kode Akses Premium:", type="password", placeholder="Ketik kode akses Anda di sini...")
     tombol_akses = st.button("Buka Akses Aplikasi", type="primary", use_container_width=True)
 
-    # LOGIKA PENGUNCIAN
     if input_pass != st.secrets["PASSWORD_AKSES"]:
-        # Tampilkan error HANYA jika klien sudah mengetik sesuatu ATAU menekan tombol
         if input_pass or tombol_akses:
-            if input_pass:
-                st.error("⛔ Kode Akses Salah!")
-            else:
-                st.error("⚠️ Silakan ketik kode akses terlebih dahulu!")
+            if input_pass: st.error("⛔ Kode Akses Salah!")
+            else: st.error("⚠️ Silakan ketik kode akses terlebih dahulu!")
         
         st.info("🔒 Aplikasi ini dikunci khusus untuk Member Premium.")
-        st.markdown("""
-        **Belum punya Kode Akses?**
-        Dapatkan panduan pola puasa lengkap dan akses aplikasi seumur hidup dengan biaya terjangkau.
-        """)
         st.link_button("🛒 Beli Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
         st.write("\n" * 5) 
-        st.caption("Klik tombol di atas untuk mendapatkan akses.")
         st.stop()
     
-    st.success("✅ Akses Diterima! Silakan isi data di bawah.")
-    st.divider()
+    st.success("✅ Akses Diterima!")
 
 # --- JALANKAN CEK PASSWORD DULU ---
 cek_password()
 
-# =========================================================================
-# AREA DI BAWAH INI HANYA AKAN MUNCUL JIKA PASSWORD BENAR
-# =========================================================================
-
-# --- FUNGSI PEMBUAT PDF (DIPERBARUI DENGAN HEADER BOX HITAM PREMIUM & SUBJUDUL) ---
-def create_pdf(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi_Sehat.png"):
-    pdf = FPDF()
-    pdf.add_page()
-    
-    # --- 1. HEADER BOX HITAM ---
-    pdf.set_fill_color(20, 20, 20)  # Warna Hitam (Almost Black)
-    pdf.rect(0, 0, 210, 32, 'F')    # Lebar A4 = 210mm, Tinggi dinaikkan ke 32mm untuk subjudul
-    
-    # Cari lokasi logo
-    if not os.path.exists(logo_path):
-        if os.path.exists("../Logo_Aplikasi_Sehat.png"):
-            logo_path = "../Logo_Aplikasi_Sehat.png"
-
-    # a) LOGO DENGAN LINGKARAN PUTIH & BINGKAI EMAS
-    if os.path.exists(logo_path):
-        pdf.set_fill_color(218, 165, 32) # Goldenrod color
-        pdf.set_draw_color(218, 165, 32)
-        pdf.ellipse(9, 5, 22, 22, 'F')
-        
-        pdf.set_fill_color(255, 255, 255) # Putih
-        pdf.ellipse(9.5, 5.5, 21, 21, 'F')
-        
-        pdf.image(logo_path, x=10.5, y=6.5, w=19, h=19)
-    
-    # b) NAMA APLIKASI (Teks Putih)
-    pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Arial", 'B', 16)
-    pdf.set_xy(35, 6) 
-    pdf.cell(0, 8, "Konsultan Hidup Sehat", ln=True)
-
-    # c) SUBJUDUL APLIKASI
-    pdf.set_font("Arial", '', 9)
-    pdf.set_text_color(220, 220, 220)
-    pdf.set_xy(35, 14)
-    subjudul = "Panduan Puasa Intermiten (Intermittent Fasting) sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan agar Mendapatkan Autofagi yang Efektif"
-    pdf.multi_cell(165, 5, subjudul)
-    
-    pdf.set_y(35)
-    
-    # --- 2. HYPERLINK SUMBER ---
-    pdf.set_font("Arial", 'I', 10)
-    pdf.set_text_color(0, 0, 255)  
-    pdf.cell(0, 5, "Sumber: https://aplikasisehat.streamlit.app", ln=True, align='C', link="https://aplikasisehat.streamlit.app")
-    pdf.ln(2)
-    
-    # --- 3. NAMA KLIEN (CENTER) ---
-    pdf.set_text_color(0, 0, 0) 
-    pdf.set_font("Arial", 'B', 16)
-    aman_nama = nama_user.encode('latin-1', 'replace').decode('latin-1')
-    pdf.cell(0, 8, f"Klien: {aman_nama} | Usia: {usia_user} Th", ln=True, align='C')
-    
-    # --- 4. INFO TANGGAL ANALISA (WIB) ---
-    pdf.set_font("Arial", 'B', 10)
-    tz_wib = timezone(timedelta(hours=7)) 
-    waktu_analisa = datetime.now(tz_wib).strftime("%d-%m-%Y %H:%M WIB")
-    pdf.cell(0, 5, f"Waktu Cetak: {waktu_analisa}", ln=True, align='R')
-    
-    pdf.set_line_width(0.5)
-    pdf.line(10, pdf.get_y()+2, 200, pdf.get_y()+2)
-    pdf.ln(5)
-    
-    # --- 5. BODY LAPORAN (PARSING OTOMATIS) ---
-    teks_bersih = teks_analisa.encode('latin-1', 'ignore').decode('latin-1')
-    
-    for baris in teks_bersih.split('\n'):
-        baris_pdf = baris.replace('**', '').replace('### ', '').replace('## ', '').strip()
-        
-        if baris_pdf.startswith(('I.', 'II.', 'III.', 'IV.', 'V.', 'VI.', 'VII.')):
-            pdf.ln(6)
-            pdf.set_font("Arial", 'B', 12)
-            pdf.set_text_color(0, 102, 204) 
-            pdf.multi_cell(0, 7, baris_pdf)
-            pdf.ln(1)
-            pdf.set_text_color(0, 0, 0) 
-            
-        elif baris_pdf.startswith('-') or baris_pdf.startswith('*'):
-            pdf.set_font("Arial", '', 11)
-            pdf.multi_cell(0, 6, "  " + baris_pdf)
-            
-        else:
-            pdf.set_font("Arial", '', 11)
-            pdf.multi_cell(0, 6, baris_pdf)
-            
-    # Footer Promosi di PDF
-    pdf.ln(15)
-    pdf.set_font("Arial", 'I', 10)
-    pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 5, "Dapatkan panduan lengkap di Ebook 'Puasa Pintar'", ln=True, align='C')
-    pdf.set_text_color(0, 0, 255) 
-    pdf.cell(0, 5, "https://lynk.id/hahastoresby", ln=True, align='C', link="https://lynk.id/hahastoresby")
-    
-    return pdf.output(dest="S").encode("latin-1")
-
-# --- 3. Cek API Key ---
+# --- CEK API KEY ---
 if "GOOGLE_API_KEY" in st.secrets:
     api_key = st.secrets["GOOGLE_API_KEY"]
+    genai.configure(api_key=api_key)
+    model = genai.GenerativeModel('models/gemini-flash-latest')
 else:
     st.error("⚠️ API Key belum dipasang. Cek Secrets.")
     st.stop()
 
-# --- 4. Formulir Utama ---
-st.markdown("### 📝 Data Diri")
-
-st.subheader("1️⃣ Data Fisik")
-nama = st.text_input("Nama Panggilan", "Sobat Sehat")
-
-col1, col2 = st.columns(2)
-with col1:
-    usia = st.number_input("Usia (Tahun)", 15, 100, 41)
-    berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
-with col2:
-    gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
-    tinggi = st.number_input("Tinggi (cm)", 100.0, 250.0, 170.0)
-
-bmi = berat / ((tinggi/100)**2)
-
-# FITUR FILTERING BARU
-st.subheader("2️⃣ Pengalaman Puasa")
-pengalaman_puasa = st.radio(
-    "Apakah Anda sudah biasa berpuasa intermiten?",
-    ["Iya", "Baru akan mencoba", "Sudah pernah tapi sudah berhenti"]
+# =========================================================================
+# NAVIGASI MENU (IN-PAGE NAVIGATION SANGAT COCOK UNTUK HP)
+# =========================================================================
+st.markdown("### 🧭 Menu Utama")
+menu_app = st.selectbox(
+    "Silakan pilih modul yang ingin dibuka:",
+    ["1️⃣ Profil & Panduan Puasa (IF)", "2️⃣ Modul Nutrisi & Superfood", "3️⃣ Modul Olahraga"]
 )
+st.divider()
 
-lama_berhenti = ""
-if pengalaman_puasa == "Sudah pernah tapi sudah berhenti":
-    lama_berhenti = st.text_input("Sudah berhenti berapa lama? (dalam bulan)")
+# =========================================================================
+# MODUL 1: PROFIL & PUASA
+# =========================================================================
+if menu_app == "1️⃣ Profil & Panduan Puasa (IF)":
+    st.markdown("### 📝 Data Diri")
 
-butuh_panduan_pemula = st.radio(
-    "Apakah Anda memerlukan Panduan Aman untuk Mulai Berpuasa bagi Pemula?",
-    ["Iya", "Tidak"]
-)
+    st.subheader("1️⃣ Data Fisik")
+    nama = st.text_input("Nama Panggilan", "Sobat Sehat")
 
-st.subheader("3️⃣ Riwayat Kesehatan")
-kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
+    col1, col2 = st.columns(2)
+    with col1:
+        usia = st.number_input("Usia (Tahun)", 15, 100, 41)
+        berat = st.number_input("Berat (kg)", 30.0, 150.0, 70.0)
+    with col2:
+        gender = st.selectbox("Jenis Kelamin", ["Laki-laki", "Perempuan"])
+        tinggi = st.number_input("Tinggi (cm)", 100.0, 250.0, 170.0)
 
-st.subheader("4️⃣ Pertanyaan Anda")
-pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
+    bmi = berat / ((tinggi/100)**2)
 
-tombol = st.button("🩺 Analisa & Berikan Panduan", type="primary", use_container_width=True)
+    st.subheader("2️⃣ Pengalaman Puasa")
+    pengalaman_puasa = st.radio("Apakah Anda sudah biasa berpuasa intermiten?", ["Iya", "Baru akan mencoba", "Sudah pernah tapi sudah berhenti"])
+    lama_berhenti = st.text_input("Sudah berhenti berapa lama? (dalam bulan)") if pengalaman_puasa == "Sudah pernah tapi sudah berhenti" else ""
+    butuh_panduan_pemula = st.radio("Apakah Anda memerlukan Panduan Aman untuk Mulai Berpuasa bagi Pemula?", ["Iya", "Tidak"])
 
-# --- 5. Logika AI & Hasil ---
-if tombol:
-    st.divider()
-    if bmi < 18.5:
-        st.warning(f"⚠️ BMI: {bmi:.2f} (Underweight)")
-    elif 18.5 <= bmi < 25:
-        st.success(f"✅ BMI: {bmi:.2f} (Normal)")
-    elif 25 <= bmi < 30:
-        st.warning(f"⚠️ BMI: {bmi:.2f} (Overweight)")
+    st.subheader("3️⃣ Riwayat Kesehatan")
+    kondisi = st.text_area("Kondisi Kesehatan:", "Ceritakan kondisi kesehatan Anda yang terakhir.", height=70)
+
+    st.subheader("4️⃣ Pertanyaan Anda")
+    pertanyaan = st.text_area("Keluhan/Pertanyaan:", "Bagaimana cara mulai puasa yang aman?", height=100)
+
+    tombol = st.button("🩺 Analisa & Susun Puasa", type="primary", use_container_width=True)
+
+    if tombol:
+        # SIMPAN KE KOPER DIGITAL
+        st.session_state['user_profile'] = {
+            "nama": nama, "usia": usia, "gender": gender, "tinggi": tinggi, "berat": berat,
+            "bmi": bmi, "kondisi": kondisi, "pertanyaan": pertanyaan
+        }
+
+        st.divider()
+        if bmi < 18.5: st.warning(f"⚠️ BMI: {bmi:.2f} (Underweight)")
+        elif 18.5 <= bmi < 25: st.success(f"✅ BMI: {bmi:.2f} (Normal)")
+        elif 25 <= bmi < 30: st.warning(f"⚠️ BMI: {bmi:.2f} (Overweight)")
+        else: st.error(f"🚨 BMI: {bmi:.2f} (Obesity)")
+            
+        try:
+            teks_berhenti = f" (Telah berhenti {lama_berhenti} bulan)" if lama_berhenti else ""
+            
+            prompt_sistem = f"""
+            PERAN: Ahli Krononutrisi & Praktisi Kesehatan Holistik.
+            DATA USER: Nama: {nama}, Usia: {usia}, Gender: {gender}, BMI: {bmi:.2f}, Pengalaman: {pengalaman_puasa}{teks_berhenti}, Butuh Pemula: {butuh_panduan_pemula}, Kondisi: {kondisi}, Tanya: {pertanyaan}.
+            
+            FORMAT (Tanpa Judul Besar, Gunakan Markdown ### untuk Angka Romawi):
+            Salam sehat {nama}, ... (kalimat pembuka).
+            
+            ### I. ANALISA KONDISI SAAT INI
+            (Isi evaluasi singkat)
+            """
+
+            if butuh_panduan_pemula == "Iya":
+                prompt_sistem += f"""
+            ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA
+            (Fase Persiapan, Implementasi 12:12, Peningkatan 14:10/16:8)
+            ### III. POLA PUASA HARIAN DALAM SEMINGGU
+            (Jadwal harian Senin-Minggu)
+            ### IV. PANDUAN PEMUTUSAN / BUKA PUASA
+            (Urutan berbuka yang aman)
+            ### V. ANALISA KELAYAKAN PUASA PANJANG
+            (Aman atau tidaknya 48-72 jam)
+            """
+            else:
+                prompt_sistem += f"""
+            ### II. POLA PUASA HARIAN DALAM SEMINGGU
+            (Jadwal harian Senin-Minggu lanjutan/berselang-seling)
+            ### III. PANDUAN PEMUTUSAN / BUKA PUASA
+            (Urutan berbuka yang aman)
+            ### IV. ANALISA KELAYAKAN PUASA PANJANG
+            (Aman atau tidaknya 48-72 jam)
+            """
+
+            prompt_sistem += "\n### PENTING: Untuk rekomendasi Olahraga dan Menu Makan, silakan buka Modul Nutrisi & Olahraga di menu Navigasi Atas."
+
+            with st.spinner('Sedang menyusun jadwal puasa Anda...'):
+                response = model.generate_content(prompt_sistem)
+                st.markdown("### 💡 Laporan Pola Puasa")
+                st.markdown(response.text)
+                
+                st.success("👇 **Langkah Selanjutnya:** Gulir ke atas, pada kotak **Menu Utama**, ganti pilihan ke **Modul Nutrisi & Superfood** untuk melihat menu makan Anda.")
+        except Exception as e:
+            st.error(f"Terjadi kesalahan: {e}")
+
+
+# =========================================================================
+# MODUL 2: NUTRISI & SUPERFOOD
+# =========================================================================
+elif menu_app == "2️⃣ Modul Nutrisi & Superfood":
+    st.markdown("### 🥗 Modul Nutrisi Khusus")
+    
+    if 'user_profile' not in st.session_state:
+        st.warning("⚠️ Silakan isi data diri Anda di menu **1️⃣ Profil & Panduan Puasa** terlebih dahulu.")
     else:
-        st.error(f"🚨 BMI: {bmi:.2f} (Obesity)")
+        data = st.session_state['user_profile']
+        st.info(f"Profil aktif: **{data['nama']}** | Usia: **{data['usia']} th** | BMI: **{data['bmi']:.2f}**")
         
-    try:
-        genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('models/gemini-flash-latest')
+        alergi = st.text_input("Apakah Anda memiliki Alergi Makanan tertentu?", placeholder="Contoh: Kacang, Telur, Seafood. Kosongkan jika tidak ada.")
         
-        # Format keterangan berhenti agar rapi di prompt
-        teks_berhenti = f" (Telah berhenti selama {lama_berhenti} bulan)" if lama_berhenti else ""
-        
-        # --- PROMPT AI STRUKTUR DINAMIS ---
-        prompt_sistem = f"""
-        PERAN ANDA:
-        Anda adalah Ahli Krononutrisi & Praktisi Kesehatan Holistik.
-        
-        DATA USER:
-        Nama: {nama}
-        Usia: {usia}
-        Gender: {gender}
-        BMI: {bmi:.2f}
-        Pengalaman Puasa: {pengalaman_puasa}{teks_berhenti}
-        Butuh Panduan Pemula: {butuh_panduan_pemula}
-        Kondisi: {kondisi}
-        Pertanyaan: "{pertanyaan}"
-        
-        INSTRUKSI KHUSUS & FORMAT OUTPUT (IKUTI SECARA KETAT):
-        
-        ATURAN UMUM:
-        - Tulis kepanjangan istilah teknis (IF, TRE, GERD, dll) saat pertama muncul.
-        - WAJIB gunakan istilah "Pemutusan / Buka Puasa (Break the Fast)".
-        - Format Judul: Gunakan Markdown (###) HANYA pada judul utama berangka Romawi. 
-        - DILARANG KERAS MENGGUNAKAN EMOJI PADA JUDUL agar PDF dapat dicetak sempurna dan diwarnai oleh sistem.
-        - WAJIB gunakan struktur angka Romawi persis seperti urutan di bawah ini.
-        
-        STRUKTUR LAPORAN HARUS SEPERTI INI:
-        
-        (TANPA JUDUL, LANGSUNG TULISKAN SALAM)
-        Salam sehat {nama}, Terima kasih atas pertanyaan Anda yang sangat proaktif. Memulai puasa, atau yang dikenal secara ilmiah sebagai *Intermittent Fasting (IF)*, adalah langkah luar biasa untuk kesehatan metabolisme dan perbaikan sel. Mengingat data dan keluhan Anda, berikut adalah panduan bertahap dan aman yang telah dirancang khusus untuk Anda.
-        
-        ### I. ANALISA KONDISI SAAT INI
-        Berikan evaluasi singkat mengenai status BMI, Usia, Kondisi Kesehatan user saat ini, riwayat pengalaman puasa mereka, serta jawab secara ringkas keluhan utama mereka.
-        """
+        if st.button("🍎 Susun Pola Nutrisi Saya", type="primary", use_container_width=True):
+            prompt_nutrisi = f"""
+            TUGAS: Susun nutrisi jendela makan dengan format JSON.
+            DATA UMUM: Usia {data['usia']}, BMI {data['bmi']:.2f}, Kondisi: {data['kondisi']}.
+            ALERGI: {alergi if alergi else 'Tidak ada'}.
+            
+            ATURAN JSON:
+            {{
+              "keamanan": "Teks penjelasan mengapa menu ini aman untuk kondisinya dan alerginya.",
+              "menu": {{
+                "berbuka": {{"nama": "teks", "alasan": "teks"}},
+                "utama": {{"nama": "teks", "alasan": "teks"}},
+                "penutup": {{"nama": "teks", "alasan": "teks"}}
+              }}
+            }}
+            """
+            
+            with st.spinner("Meracik menu yang aman untuk Anda..."):
+                resp_nutrisi = model.generate_content(prompt_nutrisi)
+                json_data = parse_ai_json(resp_nutrisi.text)
+                
+                if json_data:
+                    st.success("✅ Menu Nutrisi Berhasil Disusun!")
+                    st.write(f"**🛡️ Catatan Ahli:** {json_data['keamanan']}")
+                    
+                    st.markdown(f"**🌅 Saat Berbuka:** {json_data['menu']['berbuka']['nama']}")
+                    st.caption(f"*Alasan:* {json_data['menu']['berbuka']['alasan']}")
+                    
+                    st.markdown(f"**🍽️ Makan Utama:** {json_data['menu']['utama']['nama']}")
+                    st.caption(f"*Alasan:* {json_data['menu']['utama']['alasan']}")
+                    
+                    st.markdown(f"**🌙 Sebelum Puasa:** {json_data['menu']['penutup']['nama']}")
+                    st.caption(f"*Alasan:* {json_data['menu']['penutup']['alasan']}")
+                    
+                    st.divider()
+                    
+                    # LOGIKA SPIRULINA
+                    kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
+                    is_spirulina_aman = not any(k in data['kondisi'].lower() for k in kata_bahaya)
+                    
+                    if is_spirulina_aman:
+                        st.info("🌿 **SUPERFOOD PENDAMPING: SPIRULINA**")
+                        st.markdown("Spirulina Grade A disarankan untuk memenuhi mikronutrisi Anda saat jendela makan. Sangat baik untuk energi & detoks seluler.")
+                        link_sp = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina."
+                        st.link_button("🛒 Order Spirulina", link_sp, use_container_width=True)
+                else:
+                    st.error("Gagal menyusun menu. Silakan klik tombol susun kembali.")
 
-        # LOGIKA PERCABANGAN PROMPT (Apakah butuh panduan pemula atau tidak)
-        if butuh_panduan_pemula == "Iya":
-            prompt_sistem += f"""
-        ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA ({nama.upper()})
-        Jelaskan bahwa tubuh butuh adaptasi (menghindari kejutan metabolik). Susun menjadi 3 sub-poin berikut (gunakan cetak tebal untuk nama fase):
-        - **FASE PERSIAPAN (1 - 3 hari Sebelum Puasa):** Sarankan audit kebiasaan makan (kurangi gula/karbohidrat sederhana), prioritaskan kualitas tidur, dan optimalkan hidrasi.
-        - **FASE IMPLEMENTASI: Metode TRE 12:12 (1 Minggu Pertama):** Instruksikan untuk puasa 12 jam (misal jam 20.00 hingga 08.00). Fokus pada membiasakan lambung istirahat.
-        - **FASE PENINGKATAN: Metode TRE 14:10 sampai 16:8 (Minggu ke-2 dst):** Jelaskan cara menaikkan jam puasa perlahan setelah tubuh nyaman, agar pembakaran lemak dan autofagi mulai aktif.
-        
-        ### III. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
-        - Jika Lansia/Rentan/Pemula: Beri pola KONSISTEN (misal TRE 16:8 setiap hari) agar ritme sirkadian stabil.
-        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi OMAD (24 jam), TRE 16:8, dan TRE 12:12.
-        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
-        
-        ### IV. SARAN OLAHRAGA & WAKTU PELAKSANAAN
-        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
-        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
-        
-        ### V. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
-        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
-        
-        ### VI. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
-        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
-        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
-        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
-        
-        ### VII. REKOMENDASI NUTRISI PENDAMPING
-        - PERTAMA: Sebagai ahli krononutrisi, berikan rekomendasi nutrisi dasar (Real Food) yang paling sesuai dengan hasil analisa kondisi kesehatan dan keluhan klien.
-        - KEDUA: Evaluasi kelayakan Spirulina. Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina" sama sekali.
-        - Jika AMAN: Setelah menjelaskan nutrisi dasar, sisipkan penjelasan mengenai kehebatan Spirulina (Energi seluler, detoksifikasi) sebagai suplemen pendamping yang ideal. 
-        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
-        """
-        else:
-            prompt_sistem += f"""
-        ### II. POLA PUASA HARIAN DALAM SEMINGGU (Weekly Daily Routine)
-        - Karena klien bukan pemula/tidak butuh panduan pemula, langsung berikan panduan pola puasa lanjutan yang sesuai dengan kondisi dan riwayat pengalaman puasa mereka.
-        - Jika Sehat/Terbiasa: Beri pola BERSELANG-SELING (*Metabolic Flexibility*) contohnya kombinasi puasa panjang, OMAD (24 jam), TRE 16:8, dll.
-        - Tuliskan rincian jadwal hariannya secara jelas (Senin sampai Minggu).
-        
-        ### III. SARAN OLAHRAGA & WAKTU PELAKSANAAN
-        - Rekomendasi Jenis: Lansia/rentan (peregangan, beban ringan). Dewasa sehat (Kardio LISS & Beban/HIIT).
-        - Rekomendasi Waktu (Timing): Kardio intensitas rendah-sedang di Jendela Puasa (*Fasted State*) untuk oksidasi lemak. Latihan Beban di Jendela Makan (*Fed State*) untuk sintesis otot.
-        
-        ### IV. PANDUAN PEMUTUSAN / BUKA PUASA (Break the Fast)
-        Jelaskan bahwa cara mengakhiri puasa sama pentingnya dengan puasanya. Hindari "Pesta" kalori. Jelaskan urutan yang benar (Mulai dari air mineral/kaldu tulang, dilanjut serat/protein ringan yang mudah dicerna, sebelum masuk ke karbohidrat kompleks).
-        
-        ### V. ANALISA KELAYAKAN PUASA PANJANG & BERKALA
-        - Lakukan evaluasi ketat berdasarkan parameter Usia, Gender, BMI, Kondisi.
-        - Jika TIDAK AMAN (BMI < 18.5, lansia, rentan): Nyatakan dengan TEGAS bahwa Puasa Panjang (48-72 jam) TIDAK DIREKOMENDASIKAN. Beri alternatif batas aman (misal OMAD 24 jam dengan interval 1-2x seminggu).
-        - Jika AMAN: Nyatakan MEMUNGKINKAN. Jelaskan tanda kesiapan (*Fat-Adapted*), Pentahapan, Interval, Manfaat (Autofagi Dr. Yoshinori Ohsumi), dan Peringatan Elektrolit.
-        
-        ### VI. REKOMENDASI NUTRISI PENDAMPING
-        - PERTAMA: Sebagai ahli krononutrisi, berikan rekomendasi nutrisi dasar (Real Food) yang paling sesuai dengan hasil analisa kondisi kesehatan dan keluhan klien.
-        - KEDUA: Evaluasi kelayakan Spirulina. Jika user memiliki sakit Ginjal/Asam Urat/Alergi Seafood: JANGAN sebut kata "Spirulina" sama sekali.
-        - Jika AMAN: Setelah menjelaskan nutrisi dasar, sisipkan penjelasan mengenai kehebatan Spirulina (Energi seluler, detoksifikasi) sebagai suplemen pendamping yang ideal. 
-        - JIKA AMAN, WAJIB tutup bagian terakhir ini dengan kalimat persis: "Silakan cek rekomendasi nutrisi di bawah ini."
-        """
-        
-        with st.spinner('Sedang menyusun panduan kesehatan & analisa puasa panjang Anda...'):
-            response = model.generate_content(prompt_sistem)
-            
-            st.markdown("### 💡 Laporan & Analisa Personal")
-            st.markdown(response.text)
-            st.divider()
-            
-            # --- LOGIKA PYTHON SPIRULINA ---
-            kata_bahaya = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
-            is_spirulina_aman = True
-            
-            for kata in kata_bahaya:
-                if kata in kondisi.lower():
-                    is_spirulina_aman = False
-                    break
-            
-            if is_spirulina_aman:
-                st.info("🌿 **NUTRISI PENDAMPING (SUPERFOOD)**")
-                col_sp1, col_sp2 = st.columns([3, 1])
-                with col_sp1:
-                    st.markdown("""
-                    Berdasarkan profil Anda, **Spirulina** disarankan untuk:
-                    * Memenuhi kebutuhan mikronutrisi saat jendela makan.
-                    * Meningkatkan energi & detoksifikasi seluler alami.
 
-                    Untuk itu, kami sudah bantu kurasikan Spirulina khusus Grade A, yaitu yang Food Grade untuk manusia, bukan Spirulina yang hanya bisa dipakai sebagai Masker Wajah, atau Spirulina sebagai bahan campuran pakan ternak.
-                    """)
-                with col_sp2:
-                    link_spirulina = "https://wa.me/6281801016090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20Spirulina%20Rekomendasi%20Aplikasi%20Sehat."
-                    st.link_button("🛒 Order Spirulina", link_spirulina, use_container_width=True)
-                st.divider()
+# =========================================================================
+# MODUL 3: OLAHRAGA
+# =========================================================================
+elif menu_app == "3️⃣ Modul Olahraga":
+    st.markdown("### 🏃 Modul Olahraga Pintar")
+    
+    if 'user_profile' not in st.session_state:
+        st.warning("⚠️ Silakan isi data diri Anda di menu **1️⃣ Profil & Panduan Puasa** terlebih dahulu.")
+    else:
+        data = st.session_state['user_profile']
+        st.info(f"Profil aktif: **{data['nama']}** | Usia: **{data['usia']} th**")
+        
+        if st.button("💪 Susun Pola Olahraga Saya", type="primary", use_container_width=True):
+            prompt_olga = f"""
+            TUGAS: Buatkan saran jadwal olahraga format JSON.
+            DATA: Usia {data['usia']}, BMI {data['bmi']:.2f}, Kondisi: {data['kondisi']}.
             
-            # --- BAGIAN EBOOK ---
-            st.success("📘 **PANDUAN LENGKAP TERSEDIA**")
-            col_promo, col_btn = st.columns([2, 1])
-            with col_promo:
-                st.markdown("""
-                Pahami sains **Autofagi & Penyembuhan Sel** secara utuh.
-                Baca Ebook **"Puasa Pintar"**. Ringkas, ilmiah, mudah dipraktikkan.
-                """)
-            with col_btn:
-                link_ebook = "https://lynk.id/hahastoresby"
-                st.link_button("📖 Order Ebook", link_ebook, use_container_width=True)
-
-            st.divider()
-
-            # --- DOWNLOAD PDF ---
-            st.write("📥 **Simpan Panduan Ini:**")
-            file_pdf = create_pdf(response.text, nama, usia)
-            
-            st.download_button(
-                label="📄 Download Laporan PDF (Klik Disini)",
-                data=file_pdf,
-                file_name=f"Panduan_Sehat_{nama}.pdf",
-                mime="application/pdf",
-                use_container_width=True
-            )
-            
-            # PADDING BAWAH (UNTUK HALAMAN HASIL)
-            st.write("\n" * 5)
-            
-    except Exception as e:
-        st.error(f"Terjadi kesalahan: {e}")
+            ATURAN JSON:
+            {{
+              "peringatan_medis": "Teks peringatan batas aman (contoh: awas lutut karena BMI tinggi).",
+              "latihan_jendela_puasa": "Saran kardio ringan",
+              "latihan_jendela_makan": "Saran latihan beban/pembentukan otot",
+              "target_detak_jantung": "Angka/teks batasan"
+            }}
+            """
+            with st.spinner("Mendesain program latihan Anda..."):
+                resp_olga = model.generate_content(prompt_olga)
+                json_olga = parse_ai_json(resp_olga.text)
+                
+                if json_olga:
+                    st.success("✅ Jadwal Olahraga Berhasil Disusun!")
+                    st.error(f"**⚠️ Peringatan Keamanan:** {json_olga['peringatan_medis']}")
+                    st.write(f"**🏃 Saat Sedang Berpuasa:** {json_olga['latihan_jendela_puasa']}")
+                    st.write(f"**🏋️ Saat Jendela Makan:** {json_olga['latihan_jendela_makan']}")
+                    st.write(f"**💓 Target Detak Jantung:** {json_olga['target_detak_jantung']}")
+                else:
+                    st.error("Gagal menyusun jadwal. Silakan coba lagi.")
