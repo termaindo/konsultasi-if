@@ -102,7 +102,7 @@ def render_halaman(model):
     elif 25 <= bmi < 30: st.warning(f"⚠️ BMI: {bmi:.2f} (Overweight)")
     else: st.error(f"🚨 BMI: {bmi:.2f} (Obesity)")
 
-    if st.button("🩺 Analisa & Susun Jadwal Puasa", type="primary", use_container_width=True):
+    if st.button("🩺 Analisa & Susun Jadwal Puasa Sehat", type="primary", use_container_width=True):
         try:
             teks_berhenti = f" (Telah berhenti {data['lama_berhenti']} bulan)" if data['lama_berhenti'] else ""
             
@@ -155,7 +155,7 @@ def render_halaman(model):
                 with col_promo:
                     st.write("Pahami sains **Autofagi & Penyembuhan Sel**. Baca Ebook **'Puasa Pintar'**.")
                 with col_btn:
-                    st.link_button("📖 Order Ebook", "https://lynk.id/hahastoresby", use_container_width=True)
+                    st.link_button("📖 Order Ebook (https://lynk.id/hahastoresby", "http://lynk.id/hahastoresby/zq3l63qj96m8", use_container_width=True)
 
                 st.divider()
 
