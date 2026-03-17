@@ -58,7 +58,8 @@ def cek_password():
         st.error("⚠️ Konfigurasi Server Belum Lengkap.")
         st.stop()
 
-    input_pass = st.text_input("🔑 Masukkan Kode Akses Premium:", type="password", placeholder="Ketik kode akses Anda di sini...")
+    # PERBAIKAN: Menambahkan autocomplete="off" agar browser tidak memunculkan popup password strength
+    input_pass = st.text_input("🔑 Masukkan Kode Akses Premium:", type="password", placeholder="Ketik kode akses Anda di sini...", autocomplete="off")
     tombol_akses = st.button("Buka Akses Aplikasi", type="primary", use_container_width=True)
 
     if input_pass != st.secrets["PASSWORD_AKSES"]:
