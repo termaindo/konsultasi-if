@@ -182,7 +182,7 @@ def render_halaman(model, parse_ai_json):
 
                     # --- TOMBOL ORDER WHATSAPP (GABUNGAN) ---
                     st.markdown("---")
-                    st.write("Tingkatkan kualitas kesehatan seluler Anda. Dapatkan produk *Superfood* murni dan terkurasi link WA 0818.0202.6090 di bawah ini:")
+                    st.write("Tingkatkan kualitas kesehatan sel tubuh Anda. Dapatkan produk *Superfood* murni dan terkurasi link WA 0818.0202.6090 di bawah ini:")
                     link_sp = f"https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20{pesan_wa_produk}%20Rekomendasi%20Aplikasi%20Sehat."
                     st.link_button("🛒 Pesan Superfood Sekarang", link_sp, use_container_width=True)
                     
