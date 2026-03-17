@@ -172,4 +172,8 @@ def render_halaman(model):
                 )
                 
         except Exception as e:
-            st.error(f"Terjadi kesalahan: {e}")
+                pesan_error = str(e).lower()
+                if "429" in pesan_error or "quota" in pesan_error:
+                    st.warning("⏳ Server Konsultan AI sedang sibuk melayani antrean. Silakan tunggu sekitar 1 menit, lalu klik tombol susun kembali.")
+                else:
+                    st.error(f"Terjadi kesalahan teknis: {e}")
