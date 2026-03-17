@@ -150,15 +150,21 @@ def render_halaman(model, parse_ai_json):
                     teks_untuk_pdf += f"- Sebelum Puasa (Penutup): {json_data['menu']['penutup']['nama']}\n  Alasan Medis: {json_data['menu']['penutup']['alasan']}\n\n"
                     teks_untuk_pdf += f"### III. EDUKASI SUPERFOOD KHUSUS UNTUK ANDA\n"
                     
-                    # --- LOGIKA PENAMPILAN SUPERFOOD ---
-                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood"]
-                    is_spirulina_aman = not any(k in data['kondisi'].lower() for k in kata_bahaya_spirulina)
+                    # --- PERBAIKAN LOGIKA PENAMPILAN SUPERFOOD ---
+                    # 1. Menggabungkan data 'kondisi' dan 'alergi' menjadi satu teks untuk diperiksa
+                    teks_pengecekan_medis = f"{data['kondisi']} {alergi}".lower()
+                    
+                    # 2. Menambahkan beberapa variasi kata seafood untuk keamanan ekstra
+                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood", "laut", "udang", "kepiting", "kerang"]
+                    
+                    # 3. Cek apakah ada satupun kata bahaya di dalam teks gabungan tadi
+                    is_spirulina_aman = not any(k in teks_pengecekan_medis for k in kata_bahaya_spirulina)
                     
                     pesan_wa_produk = "Black%20Garlic" # Default jika spirulina tidak aman
                     
                     st.subheader("🌿 Rekomendasi Superfood Pendamping")
                     
-                    # 1. Tampilkan Black Garlic (Selalu aman dan direkomendasikan)
+                    # Tampilkan Black Garlic (Selalu aman)
                     with st.expander("🧄 Black Garlic (Bawang Hitam Fermentasi)", expanded=True):
                         st.markdown(f"*{json_data['edukasi_black_garlic']['alasan_medis_personal']}*")
                         st.markdown(f"**Sinergi Puasa:** {json_data['edukasi_black_garlic']['sinergi_dengan_puasa']}")
@@ -167,7 +173,7 @@ def render_halaman(model, parse_ai_json):
                         teks_untuk_pdf += f"{json_data['edukasi_black_garlic']['alasan_medis_personal']}\n"
                         teks_untuk_pdf += f"Sinergi Puasa: {json_data['edukasi_black_garlic']['sinergi_dengan_puasa']}\n\n"
 
-                    # 2. Tampilkan Spirulina (Hanya jika lolos filter keamanan)
+                    # Tampilkan Spirulina (Hanya jika aman dari tes kondisi DAN alergi)
                     if is_spirulina_aman:
                         pesan_wa_produk = "Spirulina%20dan%20Black%20Garlic"
                         with st.expander("🌱 Spirulina Grade A (Mikroalga Hijau-Biru)", expanded=True):
@@ -178,9 +184,9 @@ def render_halaman(model, parse_ai_json):
                             teks_untuk_pdf += f"{json_data['edukasi_spirulina']['alasan_medis_personal']}\n"
                             teks_untuk_pdf += f"Dukungan Autofagi: {json_data['edukasi_spirulina']['dukungan_autofagi']}\n\n"
                     else:
-                        st.info("Catatan: Spirulina tidak ditambahkan ke rekomendasi Anda berdasarkan filter keamanan riwayat medis (Ginjal/Asam Urat/Alergi Seafood).")
+                        st.info("Catatan: Spirulina tidak ditambahkan ke rekomendasi Anda berdasarkan filter keamanan riwayat medis atau alergi (Ginjal / Asam Urat / Seafood).")
 
-                    # --- TOMBOL ORDER WHATSAPP (GABUNGAN) ---
+                    # --- TOMBOL ORDER WHATSAPP ---
                     st.markdown("---")
                     st.write("Tingkatkan kualitas kesehatan sel tubuh Anda. Dapatkan produk *Superfood* murni dan terkurasi link WA 0818.0202.6090 di bawah ini:")
                     link_sp = f"https://wa.me/6281802026090?text=Halo%20kak%20Elisa,%20saya%20tertarik%20pesan%20{pesan_wa_produk}%20Rekomendasi%20Aplikasi%20Sehat."
