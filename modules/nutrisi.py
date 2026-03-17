@@ -122,7 +122,7 @@ def render_halaman(model, parse_ai_json):
         }}
         """
         
-        with st.spinner("Meracik menu dan menganalisa kebutuhan nutrisi seluler Anda..."):
+        with st.spinner("Meracik menu dan menganalisa kebutuhan nutrisi sel tubuh Anda..."):
             try:
                 resp_nutrisi = model.generate_content(prompt_nutrisi)
                 json_data = parse_ai_json(resp_nutrisi.text)
