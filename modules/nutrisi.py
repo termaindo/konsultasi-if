@@ -151,7 +151,7 @@ def render_halaman(model, parse_ai_json):
                     teks_untuk_pdf += f"### III. EDUKASI SUPERFOOD KHUSUS UNTUK ANDA\n"
                     
                     # --- LOGIKA PENAMPILAN SUPERFOOD ---
-                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "alergi seafood"]
+                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood"]
                     is_spirulina_aman = not any(k in data['kondisi'].lower() for k in kata_bahaya_spirulina)
                     
                     pesan_wa_produk = "Black%20Garlic" # Default jika spirulina tidak aman
