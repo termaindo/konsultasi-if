@@ -150,14 +150,9 @@ def render_halaman(model, parse_ai_json):
                     teks_untuk_pdf += f"- Sebelum Puasa (Penutup): {json_data['menu']['penutup']['nama']}\n  Alasan Medis: {json_data['menu']['penutup']['alasan']}\n\n"
                     teks_untuk_pdf += f"### III. EDUKASI SUPERFOOD KHUSUS UNTUK ANDA\n"
                     
-                    # --- PERBAIKAN LOGIKA PENAMPILAN SUPERFOOD ---
-                    # 1. Menggabungkan data 'kondisi' dan 'alergi' menjadi satu teks untuk diperiksa
+                    # --- PERBAIKAN LOGIKA PENAMPILAN SUPERFOOD (SILENT EXCLUSION) ---
                     teks_pengecekan_medis = f"{data['kondisi']} {alergi}".lower()
-                    
-                    # 2. Menambahkan beberapa variasi kata seafood untuk keamanan ekstra
                     kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood", "laut", "udang", "kepiting", "kerang"]
-                    
-                    # 3. Cek apakah ada satupun kata bahaya di dalam teks gabungan tadi
                     is_spirulina_aman = not any(k in teks_pengecekan_medis for k in kata_bahaya_spirulina)
                     
                     pesan_wa_produk = "Black%20Garlic" # Default jika spirulina tidak aman
@@ -173,7 +168,7 @@ def render_halaman(model, parse_ai_json):
                         teks_untuk_pdf += f"{json_data['edukasi_black_garlic']['alasan_medis_personal']}\n"
                         teks_untuk_pdf += f"Sinergi Puasa: {json_data['edukasi_black_garlic']['sinergi_dengan_puasa']}\n\n"
 
-                    # Tampilkan Spirulina (Hanya jika aman dari tes kondisi DAN alergi)
+                    # Tampilkan Spirulina (Hanya jika aman, TANPA ADA NOTIFIKASI jika tidak aman)
                     if is_spirulina_aman:
                         pesan_wa_produk = "Spirulina%20dan%20Black%20Garlic"
                         with st.expander("🌱 Spirulina Grade A (Mikroalga Hijau-Biru)", expanded=True):
@@ -183,8 +178,6 @@ def render_halaman(model, parse_ai_json):
                             teks_untuk_pdf += f"**B. Spirulina Grade A**\n"
                             teks_untuk_pdf += f"{json_data['edukasi_spirulina']['alasan_medis_personal']}\n"
                             teks_untuk_pdf += f"Dukungan Autofagi: {json_data['edukasi_spirulina']['dukungan_autofagi']}\n\n"
-                    else:
-                        st.info("Catatan: Spirulina tidak ditambahkan ke rekomendasi Anda berdasarkan filter keamanan riwayat medis atau alergi (Ginjal / Asam Urat / Seafood).")
 
                     # --- TOMBOL ORDER WHATSAPP ---
                     st.markdown("---")
