@@ -12,16 +12,34 @@ from modules import olga
 # --- 1. Konfigurasi Halaman ---
 st.set_page_config(page_title="Konsultan Hidup Sehat", page_icon="🌱", layout="centered", initial_sidebar_state="collapsed")
 
-# --- SCRIPT PENGHILANG MENU, SIDEBAR, & CSS ---
+# --- SCRIPT PENGHILANG MENU, SIDEBAR, & CUSTOM CSS ---
 hide_menu_style = """
 <style>
+/* Sembunyikan Elemen Bawaan Streamlit */
 #MainMenu {visibility: hidden;} header {visibility: hidden;} footer {visibility: hidden;}
 [data-testid="collapsedControl"] {display: none !important;}
 [data-testid="stSidebar"] {display: none !important;} section[data-testid="stSidebar"] {display: none !important;}
 [data-testid="stToolbar"] {display: none !important;} [data-testid="stDecoration"] {display: none !important;}
 [data-testid="stStatusWidget"] {display: none !important;} div[class*="viewerBadge"] {display: none !important;}
+
+/* Manuver Jarak Aman / Padding */
 .block-container { padding-top: 2rem !important; padding-bottom: 150px !important; }
+
+/* Custom Font untuk Heading Streamlit */
 h3 { color: #0066cc; border-bottom: 2px solid #f0f2f6; padding-bottom: 5px; margin-top: 25px; }
+
+/* --- UPGRADE: WARNA TOMBOL PRIMARY MENJADI HIJAU SEGAR --- */
+button[kind="primary"] {
+    background-color: #2e7d32 !important; /* Warna Hijau Daun */
+    border-color: #2e7d32 !important; 
+    color: white !important; 
+    font-weight: bold !important;
+    border-radius: 8px !important;
+}
+button[kind="primary"]:hover {
+    background-color: #1b5e20 !important; /* Hijau lebih gelap saat di-hover */
+    border-color: #1b5e20 !important;
+}
 </style>
 """
 st.markdown(hide_menu_style, unsafe_allow_html=True)
@@ -36,6 +54,7 @@ def parse_ai_json(teks_respon):
 
 # --- 2. FUNGSI GATEKEEPER (GERBANG TOL) ---
 def cek_password():
+    # 1. TAMPILKAN LOGO
     logo_path = "Logo_Aplikasi_Sehat.png"
     if os.path.exists(logo_path):
         with open(logo_path, "rb") as image_file:
@@ -50,18 +69,33 @@ def cek_password():
         """
         st.markdown(html_logo, unsafe_allow_html=True)
     
-    st.markdown("<h1 style='text-align: center; margin-top: -10px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
-    st.markdown("<h5 style='text-align: center; color: #FFFFFF; font-weight: normal; font-size: 15px; margin-bottom: 20px; line-height: 1.4;'>Panduan Puasa Intermiten sesuai Usia, Jenis Kelamin, Komposisi Tubuh, dan Riwayat Kesehatan</h5>", unsafe_allow_html=True)
-    st.divider()
+    # 2. JUDUL APLIKASI
+    st.markdown("<h1 style='text-align: center; margin-top: -10px; margin-bottom: 5px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
+    
+    # 3. COPYWRITING YANG MENGGUGAH
+    st.markdown("<p style='text-align: center; color: #E0E0E0; font-size: 15px; margin-bottom: 20px; line-height: 1.5;'>Dapatkan panduan Puasa Intermiten (IF), Nutrisi, dan Olahraga yang dirancang khusus untuk tubuh Anda berdasarkan tinjauan ilmiah medis.</p>", unsafe_allow_html=True)
+    
+    # 4. POIN KEUNGGULAN (Desain Box Ringkas)
+    keunggulan_html = """
+    <div style="background-color: #1E1E1E; padding: 15px 18px; border-radius: 10px; border-left: 5px solid #2e7d32; margin-bottom: 25px; font-size: 13.5px; color: #DCDCDC; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        <div style="margin-bottom: 6px;">✅ <b>IF Aman:</b> Pola puasa yang disesuaikan usia, jenis kelamin, gemuk kurusnya badan (BMI), dan riwayat kesehatan (Maag, Diabetes, Jantung, dll).</div>
+        <div style="margin-bottom: 6px;">✅ <b>Nutrisi Cerdas:</b> Rekomendasi makanan & suplemen sesuai profil alergi Anda.</div>
+        <div style="margin-bottom: 6px;">✅ <b>Olahraga Terukur:</b> Panduan detak jantung agar latihan efektif dan bebas risiko fatal.</div>
+        <div>✅ <b>Laporan Instan:</b> Download rangkuman kesehatan Anda dalam format PDF.</div>
+    </div>
+    """
+    st.markdown(keunggulan_html, unsafe_allow_html=True)
 
+    # Cek Konfigurasi
     if "PASSWORD_AKSES" not in st.secrets:
         st.error("⚠️ Konfigurasi Server Belum Lengkap.")
         st.stop()
 
-    # PERBAIKAN: Menambahkan autocomplete="off" agar browser tidak memunculkan popup password strength
+    # 5. KOTAK KODE AKSES & TOMBOL
     input_pass = st.text_input("🔑 Masukkan Kode Akses Premium:", type="password", placeholder="Ketik kode akses Anda di sini...", autocomplete="off")
     tombol_akses = st.button("Buka Akses Aplikasi", type="primary", use_container_width=True)
 
+    # 6. LOGIKA VALIDASI
     if input_pass != st.secrets["PASSWORD_AKSES"]:
         if input_pass or tombol_akses:
             if input_pass: st.error("⛔ Kode Akses Salah!")
@@ -69,11 +103,12 @@ def cek_password():
         
         st.info("🔒 Aplikasi ini dikunci khusus untuk Member Premium.")
         st.link_button("🛒 Beli Kode Akses (Klik Disini)", "https://lynk.id/hahastoresby", type="primary", use_container_width=True)
-        st.write("\n" * 5) 
+        st.write("\n" * 3) 
         st.stop()
     
     st.success("✅ Akses Diterima!")
 
+# Panggil fungsi Gatekeeper
 cek_password()
 
 # --- CEK API KEY ---
