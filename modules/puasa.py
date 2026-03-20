@@ -117,6 +117,7 @@ def render_halaman(model):
             (Isi evaluasi singkat)
             """
 
+            # --- PERBAIKAN PADA PROMPT KELAYAKAN PUASA PANJANG ---
             if data['butuh_panduan_pemula'] == "Iya":
                 prompt_sistem += f"""
             ### II. PANDUAN MEMULAI PUASA AMAN BAGI PEMULA
@@ -125,8 +126,11 @@ def render_halaman(model):
             (Jadwal harian Senin-Minggu)
             ### IV. PANDUAN PEMUTUSAN / BUKA PUASA
             (Urutan berbuka yang aman)
-            ### V. ANALISA KELAYAKAN PUASA PANJANG
-            (Aman atau tidaknya 48-72 jam)
+            ### V. ANALISA KELAYAKAN PUASA IF PANJANG (24 - 72 JAM)
+            - WAJIB definisikan secara tertulis bahwa "Puasa IF Panjang" adalah puasa berdurasi minimal 24 jam sampai dengan 72 jam.
+            - Lakukan evaluasi ketat kelayakan klien dengan mempertimbangkan 4 aspek secara spesifik: Usia, Jenis Kelamin, BMI, dan Riwayat Kesehatan klien.
+            - Jika rentan/berisiko (misal BMI < 18.5, lansia, gangguan lambung/medis kronis): Nyatakan dengan TEGAS bahwa puasa panjang TIDAK DIREKOMENDASIKAN demi keselamatan. Berikan alternatif aman (maksimal puasa 16 jam).
+            - Jika aman: Nyatakan MEMUNGKINKAN. Berikan syarat harus sudah adaptasi lemak (fat-adapted), interval yang disarankan, dan panduan asupan elektrolit.
             """
             else:
                 prompt_sistem += f"""
@@ -134,8 +138,11 @@ def render_halaman(model):
             (Jadwal harian Senin-Minggu lanjutan/berselang-seling)
             ### III. PANDUAN PEMUTUSAN / BUKA PUASA
             (Urutan berbuka yang aman)
-            ### IV. ANALISA KELAYAKAN PUASA PANJANG
-            (Aman atau tidaknya 48-72 jam)
+            ### IV. ANALISA KELAYAKAN PUASA IF PANJANG (24 - 72 JAM)
+            - WAJIB definisikan secara tertulis bahwa "Puasa IF Panjang" adalah puasa berdurasi minimal 24 jam sampai dengan 72 jam.
+            - Lakukan evaluasi ketat kelayakan klien dengan mempertimbangkan 4 aspek secara spesifik: Usia, Jenis Kelamin, BMI, dan Riwayat Kesehatan klien.
+            - Jika rentan/berisiko (misal BMI < 18.5, lansia, gangguan lambung/medis kronis): Nyatakan dengan TEGAS bahwa puasa panjang TIDAK DIREKOMENDASIKAN demi keselamatan. Berikan alternatif aman.
+            - Jika aman: Nyatakan MEMUNGKINKAN. Berikan syarat harus sudah adaptasi lemak (fat-adapted), interval yang disarankan, dan panduan asupan elektrolit.
             """
 
             prompt_sistem += "\n### PENTING: Untuk rekomendasi Olahraga dan Menu Makan, silakan buka Modul Nutrisi & Olahraga di menu Navigasi Atas."
@@ -155,7 +162,8 @@ def render_halaman(model):
                 with col_promo:
                     st.write("Pahami sains **Autofagi & Penyembuhan Sel**. Baca Ebook **'Puasa Pintar'**.")
                 with col_btn:
-                    st.link_button("📖 Order Ebook (https://lynk.id/hahastoresby", "http://lynk.id/hahastoresby/zq3l63qj96m8", use_container_width=True)
+                    # Sedikit merapikan teks tombol link
+                    st.link_button("📖 Order Ebook (lynk.id/hahastoresby)", "http://lynk.id/hahastoresby/zq3l63qj96m8", use_container_width=True)
 
                 st.divider()
 
