@@ -72,8 +72,8 @@ def cek_password():
     # 2. JUDUL APLIKASI
     st.markdown("<h1 style='text-align: center; margin-top: -10px; margin-bottom: 5px;'>🌱 Konsultan Hidup Sehat</h1>", unsafe_allow_html=True)
     
-    # 3. COPYWRITING YANG MENGGUGAH
-    st.markdown("<p style='text-align: center; color: #E0E0E0; font-size: 15px; margin-bottom: 20px; line-height: 1.5;'>Dapatkan panduan Puasa Intermiten (IF), Nutrisi, dan Olahraga yang dirancang khusus untuk tubuh Anda berdasarkan tinjauan ilmiah medis.</p>", unsafe_allow_html=True)
+    # 3. COPYWRITING YANG MENGGUGAH (Warna Teks Otomatis Adaptif)
+    st.markdown("<p style='text-align: center; font-size: 15px; margin-bottom: 20px; line-height: 1.5;'>Dapatkan panduan Puasa Intermiten (IF), Nutrisi, dan Olahraga yang dirancang khusus untuk tubuh Anda berdasarkan tinjauan ilmiah medis.</p>", unsafe_allow_html=True)
     
     # 4. POIN KEUNGGULAN (Desain Box Ringkas)
     keunggulan_html = """
