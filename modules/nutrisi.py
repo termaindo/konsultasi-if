@@ -152,7 +152,7 @@ def render_halaman(model, parse_ai_json):
                     
                     # --- PERBAIKAN LOGIKA PENAMPILAN SUPERFOOD (SILENT EXCLUSION) ---
                     teks_pengecekan_medis = f"{data['kondisi']} {alergi}".lower()
-                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood", "laut", "udang", "kepiting", "kerang"]
+                    kata_bahaya_spirulina = ["ginjal", "gagal", "cuci darah", "ckd", "hemo", "kreatinin", "asam urat", "seafood", "laut", "udang", "kepiting", "kerang", "autoimun", "auto imun"]
                     is_spirulina_aman = not any(k in teks_pengecekan_medis for k in kata_bahaya_spirulina)
                     
                     pesan_wa_produk = "Black%20Garlic" # Default jika spirulina tidak aman
