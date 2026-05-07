@@ -39,7 +39,7 @@ def create_pdf_olga(teks_analisa, nama_user, usia_user, logo_path="Logo_Aplikasi
     pdf.set_y(35)
     pdf.set_font("Arial", 'I', 10)
     pdf.set_text_color(0, 0, 255)  
-    pdf.cell(0, 5, "Sumber: https://aplikasisehat.streamlit.app", ln=True, align='C', link="https://aplikasisehat.streamlit.app")
+    pdf.cell(0, 5, "Sumber: https://s.id/aplikasisehat", ln=True, align='C', link="https://s.id/aplikasisehat")
     pdf.ln(2)
     
     # Nama Klien & Tanggal
